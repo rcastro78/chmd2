@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CHMD</string>
+    <string name="BASE_URL">https://www.chmd.edu.mx/</string>
+    <string name="SHARED_PREF">mx.edu.chmd2.spref</string>
+    <string name="navigation_drawer_open">Abierto</string>
+    <string name="navigation_drawer_close">Cerrado</string>
+</resources>
