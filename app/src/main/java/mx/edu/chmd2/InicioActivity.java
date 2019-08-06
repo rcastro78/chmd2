@@ -94,10 +94,12 @@ FloatingActionButton fabLogin;
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+            try {
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                handleSignInResult(result);
+            }catch (Exception ex){
+                Toast.makeText(getApplicationContext(),ex.getMessage(),Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -109,7 +111,13 @@ FloatingActionButton fabLogin;
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("email",account.getEmail());
             editor.putString("nombre",account.getDisplayName());
-            editor.putString("userPic",account.getPhotoUrl().toString());
+            String userPic = "";
+            try{
+                userPic = account.getPhotoUrl().toString();
+            }catch (Exception ex){
+                userPic = "";
+            }
+            editor.putString("userPic",userPic);
             editor.putString("idToken",account.getIdToken());
 
             editor.commit();
