@@ -2,7 +2,7 @@ package mx.edu.chmd2.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +21,13 @@ public class CircularesAdapter extends BaseAdapter {
     Circular c;
     ViewHolder holder=new ViewHolder();
     String TAG="CircularesAdapter";
+    Typeface tf,tfBold;
+    public CircularesAdapter(Activity activity, ArrayList<Circular> items) {
+        this.activity = activity;
+        this.items = items;
+        tf = Typeface.createFromAsset(activity.getAssets(),"fonts/GothamRoundedBook_21018.ttf");
+        tfBold = Typeface.createFromAsset(activity.getAssets(),"fonts/GothamRoundedBold_21016.ttf");
+    }
 
     @Override
     public int getCount() {
@@ -53,26 +60,35 @@ public class CircularesAdapter extends BaseAdapter {
             holder.lblFecha1 = convertView.findViewById(R.id.lblFecha1);
             holder.lblFecha2 = convertView.findViewById(R.id.lblFecha2);
             holder.imgCircular = convertView.findViewById(R.id.imgCircular);
-            holder.fabEliminar = convertView.findViewById(R.id.fabEliminar);
+
 
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lblEncab.setText(c.getEncabezado());
-        holder.lblNomCircular.setText(c.getNombre());
+        holder.lblEncab.setTypeface(tfBold);
+        holder.lblNomCircular.setTypeface(tf);
+        holder.lblFecha1.setTypeface(tf);
+        holder.lblFecha2.setTypeface(tf);
+
+        if(c.getLeida()==1){
+            holder.imgCircular.setImageResource(R.drawable.appmenu04);
+        }
+        if(c.getLeida()==0){
+            holder.imgCircular.setImageResource(R.drawable.appmenu05);
+        }
+        if(c.getFavorita()==1){
+            holder.imgCircular.setImageResource(R.drawable.appmenu06);
+        }
+        if(c.getCompartida()==1){
+            holder.imgCircular.setImageResource(R.drawable.appmenu08);
+        }
+
+        holder.lblEncab.setText(c.getNombre());
+        holder.lblNomCircular.setText(c.getEncabezado());
         holder.lblFecha1.setText(c.getFecha1());
         holder.lblFecha2.setText(c.getFecha2());
-        if (c.getEstado()==1){
-            //TODO:Cambiar icono
-        }
-        holder.fabEliminar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO:Falta la implementación
-            }
-        });
 
 
         return convertView;
@@ -81,7 +97,7 @@ public class CircularesAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView lblNomCircular,lblEncab,lblFecha1,lblFecha2;
         ImageView imgCircular;
-        FloatingActionButton fabEliminar;
+
 
     }
 }

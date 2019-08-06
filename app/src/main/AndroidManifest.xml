@@ -15,8 +15,15 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+
         android:theme="@style/AppTheme">
-        <activity android:name=".Padres.PadresActivity"></activity>
+        <activity android:name=".CircularDetalleActivity"></activity>
+        <activity
+            android:name=".CircularActivity"
+            android:label="@string/title_activity_circular"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".validaciones.ValidarPadreActivity" />
+        <activity android:name=".Padres.PadresActivity" />
         <activity android:name=".Alumnos.AlumnosActivity" />
         <activity android:name=".WebCHMDActivity" />
         <activity android:name=".PrincipalActivity" />
@@ -29,6 +36,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".servicios.CHMDMessagingService"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+
+        <meta-data
+            android:name="AA_MODELS"
+            android:value="mx.edu.chmd2.modelosDB.DBCircular" />
+
+        <provider
+            android:name=".utilerias.CHMDDatabaseProvider"
+            android:authorities="mx.edu.chmd2"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import mx.edu.chmd2.Alumnos.AlumnosActivity;
 import mx.edu.chmd2.Padres.PadresActivity;
 import mx.edu.chmd2.adapter.MenuAdapter;
-import mx.edu.chmd2.modelos.Alumno;
 import mx.edu.chmd2.modelos.Menu;
 
 public class MenuCircularesActivity extends AppCompatActivity {
@@ -69,9 +68,9 @@ public class MenuCircularesActivity extends AppCompatActivity {
                 }
 
                 if(m.getIdMenu()==5){
-                    /*Intent intent = new Intent(MenuCircularesActivity.this, AlumnosActivity.class);
-                    startActivity(intent);*/
-                    Toast.makeText(getApplicationContext(),"En construcción",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(MenuCircularesActivity.this, CircularActivity.class);
+                    startActivity(intent);
+                    //Toast.makeText(getApplicationContext(),"En construcción",Toast.LENGTH_LONG).show();
                 }
 
 

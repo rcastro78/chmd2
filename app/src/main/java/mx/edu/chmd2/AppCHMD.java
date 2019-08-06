@@ -3,6 +3,8 @@ package mx.edu.chmd2;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.Configuration;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -18,8 +20,9 @@ public class AppCHMD extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mInstance = this;
+        Configuration dbConfiguration = new Configuration.Builder(this).setDatabaseName("chmd.db").create();
+        ActiveAndroid.initialize(dbConfiguration);
     }
 
     public static synchronized AppCHMD getInstance() {

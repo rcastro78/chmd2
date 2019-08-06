@@ -1,32 +1,70 @@
 package mx.edu.chmd2;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
-import java.util.ArrayList;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
-import mx.edu.chmd2.Alumnos.AlumnosActivity;
-import mx.edu.chmd2.Padres.PadresActivity;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import mx.edu.chmd2.adapter.MenuAdapter;
 import mx.edu.chmd2.modelos.Menu;
+import mx.edu.chmd2.modelos.Usuario;
 
 public class PrincipalActivity extends AppCompatActivity {
     MenuAdapter menuAdapter = null;
     ListView lstPrincipal;
     ArrayList<Menu> items = new ArrayList<>();
     VideoView videoview;
+
+    static String BASE_URL;
+    static String RUTA;
+    SharedPreferences sharedPreferences;
+    String correo,rsp;
+    static String METODO_REG="registrarDispositivo.php";
+    ArrayList<Usuario> usuario = new ArrayList<>();
+    static String TAG=PrincipalActivity.class.getName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+        BASE_URL = this.getString(R.string.BASE_URL);
+        RUTA = this.getString(R.string.PATH);
 
         videoview = findViewById(R.id.videoView);
         videoview.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -38,7 +76,25 @@ public class PrincipalActivity extends AppCompatActivity {
         videoview.setVideoURI(uri);
         videoview.start();
 
+        sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
+        correo = sharedPreferences.getString("email","");
+
+        FirebaseInstanceId.getInstance().getInstanceId() .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Log.w(TAG, "getInstanceId failed", task.getException());
+                    return;
+                }
+                String token = task.getResult().getToken();
+                new RegistrarDispositivoAsyncTask(correo,token,"Android OS").execute();
+            }
+        });
+
+
+
         lstPrincipal = findViewById(R.id.lstPrincipal);
+
         llenarMenu();
         lstPrincipal.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -66,4 +122,78 @@ public class PrincipalActivity extends AppCompatActivity {
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);
     }
+
+
+
+
+
+
+    private class RegistrarDispositivoAsyncTask extends AsyncTask<Void, Long, Boolean> {
+        private String correo;
+        private String device_token;
+        private String plataforma;
+
+
+        public RegistrarDispositivoAsyncTask(String correo, String device_token, String plataforma) {
+            this.correo = correo;
+            this.device_token = device_token;
+            this.plataforma = plataforma;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("RESPONSE","ejecutando...");
+        }
+
+        public void registraDispositivo(){
+            HttpClient httpClient;
+            HttpPost httppost;
+            httpClient = new DefaultHttpClient();
+            httppost = new HttpPost(BASE_URL+RUTA+METODO_REG);
+            try {
+                List<NameValuePair> nameValuePairs = new ArrayList<>(3);
+                nameValuePairs.add(new BasicNameValuePair("correo",correo));
+                nameValuePairs.add(new BasicNameValuePair("device_token",device_token));
+                nameValuePairs.add(new BasicNameValuePair("plataforma",plataforma));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                HttpResponse response = httpClient.execute(httppost);
+                int responseCode = response.getStatusLine().getStatusCode();
+                Log.d("RESPONSE", ""+responseCode);
+                switch(responseCode) {
+                    case 200:
+                        HttpEntity entity = response.getEntity();
+                        if(entity != null) {
+                            String responseBody = EntityUtils.toString(entity);
+                            rsp=responseBody;
+                        }
+                        break;
+                }
+                Log.d("RESPONSE", rsp);
+
+
+
+
+            }catch (Exception e){
+                Log.d("RESPONSE",e.getMessage());
+            }
+
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            Log.d("RESPONSE","ejecutado.-");
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            registraDispositivo();
+            return null;
+        }
+    }
+
+
 }

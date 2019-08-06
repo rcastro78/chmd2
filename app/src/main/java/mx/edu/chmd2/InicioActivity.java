@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -18,6 +22,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import mx.edu.chmd2.validaciones.ValidarPadreActivity;
+
 public class InicioActivity extends AppCompatActivity {
 FloatingActionButton fabLogin;
     GoogleSignInOptions gso;
@@ -26,12 +32,13 @@ FloatingActionButton fabLogin;
     SharedPreferences sharedPreferences;
     static String TAG = InicioActivity.class.getName();
     VideoView videoview;
+    int valida;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-
+        valida = sharedPreferences.getInt("cuentaValida",0);
         videoview = findViewById(R.id.videoView);
         videoview.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
@@ -46,6 +53,7 @@ FloatingActionButton fabLogin;
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestProfile()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -64,8 +72,13 @@ FloatingActionButton fabLogin;
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account!=null){
-            Intent intent = new Intent(InicioActivity.this,PrincipalActivity.class);
-            startActivity(intent);
+
+            if(valida==1) {
+                Intent intent = new Intent(InicioActivity.this, ValidarPadreActivity.class);
+                startActivity(intent);
+            }else{
+                mGoogleSignInClient.signOut();
+            }
         }
     }
 
@@ -83,14 +96,16 @@ FloatingActionButton fabLogin;
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
         }
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            GoogleSignInAccount account = result.getSignInAccount();
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("email",account.getEmail());
             editor.putString("nombre",account.getDisplayName());
@@ -98,17 +113,22 @@ FloatingActionButton fabLogin;
             editor.putString("idToken",account.getIdToken());
 
             editor.commit();
-            Intent intent = new Intent(InicioActivity.this,PrincipalActivity.class);
+
+            Intent intent = new Intent(InicioActivity.this, ValidarPadreActivity.class);
             startActivity(intent);
-            // Signed in successfully, show authenticated UI.
-            //updateUI(account);
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            //updateUI(null);
+
+        }else{
+            Log.w(TAG, "No se pudo iniciar sesión");
         }
+
     }
+
+
+
+
+
+
+
 
 
 

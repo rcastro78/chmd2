@@ -2,18 +2,15 @@ package mx.edu.chmd2;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.webkit.WebViewClient;
 public class WebCHMDActivity extends AppCompatActivity {
 TextView lblTextToolbar;
