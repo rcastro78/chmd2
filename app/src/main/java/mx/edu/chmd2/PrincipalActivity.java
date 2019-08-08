@@ -101,17 +101,15 @@ public class PrincipalActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Menu m = (Menu)lstPrincipal.getItemAtPosition(position);
                 if(m.getIdMenu()==1){
-                    //Intent intent = new Intent(PrincipalActivity.this,MainActivity.class);
-                    Intent intent = new Intent(PrincipalActivity.this, MenuCircularesActivity.class);
+                    //Circulares
+                    Intent intent = new Intent(PrincipalActivity.this, CircularActivity.class);
                     startActivity(intent);
                 }
-                //web
+                //Web
                 if(m.getIdMenu()==2){
                     Intent intent = new Intent(PrincipalActivity.this,WebCHMDActivity.class);
                     startActivity(intent);
                 }
-
-
             }
         });
     }

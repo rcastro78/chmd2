@@ -112,6 +112,7 @@ FloatingActionButton fabLogin;
             editor.putString("email",account.getEmail());
             editor.putString("nombre",account.getDisplayName());
             String userPic = "";
+            //Al venir la pic vacía daba error, se cerraba luego de escoger la cuenta.
             try{
                 userPic = account.getPhotoUrl().toString();
             }catch (Exception ex){

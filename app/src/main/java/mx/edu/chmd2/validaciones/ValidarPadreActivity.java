@@ -65,9 +65,9 @@ public class ValidarPadreActivity extends AppCompatActivity {
                                     "Error",
                                     Toast.LENGTH_LONG).show();
                         }
-                        //TODO: Cambiarlo cuando pase a prueba en MX
+                        //TODO: Cambiarlo a 0 para pruebas
                         // if (existe.equalsIgnoreCase("1")) {
-                        if (existe.equalsIgnoreCase("0") || existe.equalsIgnoreCase("1")) {
+                        if (existe.equalsIgnoreCase("1")) {
 
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putInt("cuentaValida",1);
@@ -86,7 +86,7 @@ public class ValidarPadreActivity extends AppCompatActivity {
                             }, 3000);
 
                         }else{
-                            lblMensaje.setText("No se pudo validar la cuenta");
+                            lblMensaje.setText("Cuenta de correo no registrada");
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putInt("cuentaValida",0);
                             editor.commit();
