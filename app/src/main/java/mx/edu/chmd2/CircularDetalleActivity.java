@@ -48,6 +48,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     static String METODO="getCircularId2.php";
     static String METODO_CIRC="getCirculares.php";
     static String METODO_REG="leerCircular.php";
+    static String METODO_NOLEER="noleerCircular.php";
     static String METODO_DEL="eliminarCircular.php";
     static String METODO_FAV="favCircular.php";
     static String BASE_URL;
@@ -57,7 +58,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     WebView wvwDetalleCircular;
     String idCircular;
     String idUsuario,rsp;
-    ImageView imgEliminarSeleccionados,imgMoverFavSeleccionados;
+    ImageView imgEliminarSeleccionados,imgMoverFavSeleccionados,imgMoverNoLeidos;
     ImageView btnSiguiente,btnAnterior;
     int pos=0;
     ArrayList<Circular> circulares = new ArrayList<>();
@@ -88,6 +89,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         lblTitulo = findViewById(R.id.lblTitulo);
         imgMoverFavSeleccionados = findViewById(R.id.imgMoverFavSeleccionados);
         imgEliminarSeleccionados = findViewById(R.id.imgEliminarSeleccionados);
+        imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);
         btnSiguiente = findViewById(R.id.btnSiguiente);
         btnAnterior = findViewById(R.id.btnAnterior);
         getCirculares(1660);
@@ -120,6 +122,25 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new FavAsyncTask(idCircular,"1660").execute();
+                    }
+                });
+                builder.setNegativeButton("Cancelar", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+
+        imgMoverNoLeidos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
+                builder.setTitle("Mover a favoritos");
+                builder.setMessage("¿Estás seguro que quieres mover esta circular a no leídas?");
+                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new NoLeerAsyncTask(idCircular,"1660").execute();
                     }
                 });
                 builder.setNegativeButton("Cancelar", null);
@@ -207,6 +228,68 @@ public class CircularDetalleActivity extends AppCompatActivity {
             HttpPost httppost;
             httpClient = new DefaultHttpClient();
             httppost = new HttpPost(BASE_URL+RUTA+METODO_REG);
+            try {
+                List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+                nameValuePairs.add(new BasicNameValuePair("circular_id",idCircular));
+                nameValuePairs.add(new BasicNameValuePair("usuario_id",idUsuario));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                HttpResponse response = httpClient.execute(httppost);
+                int responseCode = response.getStatusLine().getStatusCode();
+                Log.d("RESPONSE", ""+responseCode);
+                switch(responseCode) {
+                    case 200:
+                        HttpEntity entity = response.getEntity();
+                        if(entity != null) {
+                            String responseBody = EntityUtils.toString(entity);
+                            rsp=responseBody;
+                        }
+                        break;
+                }
+                Log.d("RESPONSE", rsp);
+
+
+
+
+            }catch (Exception e){
+                Log.d("RESPONSE",e.getMessage());
+            }
+
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            Log.d("RESPONSE","ejecutado.-");
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            registraLectura();
+            return null;
+        }
+    }
+    private class NoLeerAsyncTask extends AsyncTask<Void, Long, Boolean> {
+        private String idCircular;
+        private String idUsuario;
+
+        public NoLeerAsyncTask(String idCircular, String idUsuario) {
+            this.idCircular = idCircular;
+            this.idUsuario = idUsuario;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("RESPONSE","ejecutando...");
+        }
+
+        public void registraLectura(){
+            HttpClient httpClient;
+            HttpPost httppost;
+            httpClient = new DefaultHttpClient();
+            httppost = new HttpPost(BASE_URL+RUTA+METODO_NOLEER);
             try {
                 List<NameValuePair> nameValuePairs = new ArrayList<>(2);
                 nameValuePairs.add(new BasicNameValuePair("circular_id",idCircular));

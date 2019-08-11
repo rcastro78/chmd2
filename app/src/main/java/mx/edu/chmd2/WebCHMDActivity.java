@@ -52,7 +52,7 @@ WebView webView;
         WebSettings webSettings = webView.getSettings();
         webSettings.setBuiltInZoomControls(true);
         webView.setWebViewClient(wvc);
-        webView.loadUrl("http://moodle.chmd.edu.mx/login/index.php");
+        webView.loadUrl("https://www.chmd.edu.mx/pruebascd/icloud/");
 
 
     }

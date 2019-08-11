@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="90"
-            android:weightSum="100"
+            android:weightSum="120"
             android:orientation="horizontal"
             android:background="@color/colorPrimary">
 
@@ -56,6 +56,24 @@
                     android:src="@drawable/appmenu08"/>
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:id="@+id/imgMoverNoLeidos"
+                    android:clickable="true"
+
+                    android:src="@drawable/appmenu05"/>
+
+            </RelativeLayout>
+
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
