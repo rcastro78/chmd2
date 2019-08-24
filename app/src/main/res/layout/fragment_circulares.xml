@@ -3,19 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent" android:descendantFocusability="blocksDescendants" >
 
-    <SearchView
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/colorPrimary"
-        android:id="@+id/searchBar"
-        android:layout_below="@id/toolbar"></SearchView>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="100"
-        android:orientation="vertical"
-        android:layout_below="@id/searchBar">
+
+        android:orientation="vertical">
+
 
     <ListView
         android:layout_width="match_parent"
@@ -31,40 +28,25 @@
         android:headerDividersEnabled="false"
         ></ListView>
 
-        <LinearLayout
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="90"
-            android:weightSum="100"
+            android:weightSum="30"
             android:orientation="horizontal"
             android:background="@color/colorPrimary">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="25">
 
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/chkTodos"
-                    android:text="Todos"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textStyle="bold"
-                    android:layout_centerInParent="true"
-                    />
-
-            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="25">
+                android:layout_weight="10">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="12dp"
                     android:id="@+id/imgMoverFavSeleccionados"
                     android:clickable="true"
                     android:src="@drawable/appmenu06"/>
@@ -74,12 +56,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="25">
+                android:layout_weight="10">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="12dp"
+
                     android:id="@+id/imgMoverComp"
                     android:clickable="true"
                     android:src="@drawable/appmenu04"/>
@@ -89,16 +72,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="25">
+                android:layout_weight="10">
 
                 <ImageView
                     android:id="@+id/imgEliminarSeleccionados"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_margin="12dp"
                     android:clickable="true"
                     android:src="@drawable/appmenu07" />
 
@@ -108,5 +88,7 @@
 
 
     </LinearLayout>
+
+
 
 </RelativeLayout>

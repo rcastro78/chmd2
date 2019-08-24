@@ -3,6 +3,7 @@ package mx.edu.chmd2;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,6 +61,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     String idUsuario,rsp;
     ImageView imgEliminarSeleccionados,imgMoverFavSeleccionados,imgMoverNoLeidos;
     ImageView btnSiguiente,btnAnterior;
+    Typeface t;
     int pos=0;
     ArrayList<Circular> circulares = new ArrayList<>();
     @Override
@@ -79,9 +81,10 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        t = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedBold_21016.ttf");
         lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
         lblEncabezado.setText("Detalle de la circular");
+        lblEncabezado.setTypeface(t);
 
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
@@ -93,6 +96,8 @@ public class CircularDetalleActivity extends AppCompatActivity {
         btnSiguiente = findViewById(R.id.btnSiguiente);
         btnAnterior = findViewById(R.id.btnAnterior);
         getCirculares(1660);
+
+
         imgEliminarSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,6 +158,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         wvwDetalleCircular.getSettings().setJavaScriptEnabled(true);
         lblTitulo.setText(getIntent().getStringExtra("tituloCircular"));
         idCircular = getIntent().getStringExtra("idCircular");
+        new RegistrarLecturaAsyncTask(idCircular,"1660").execute();
         wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
 
         btnAnterior.setOnClickListener(new View.OnClickListener() {

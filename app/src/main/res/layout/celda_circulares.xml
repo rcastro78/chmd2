@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="100"
+        android:id="@+id/llContainer"
         >
 
 
@@ -22,6 +23,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="70">
+
+
+        <CheckBox
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:id="@+id/chkSeleccion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="top"
+            android:paddingLeft="6dip"
+            android:paddingTop="6dip"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+            />
+
 
         <ImageView
             android:id="@+id/imgCircular"

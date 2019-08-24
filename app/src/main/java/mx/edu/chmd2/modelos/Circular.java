@@ -6,8 +6,8 @@ public class Circular {
     private String fecha1,fecha2;
     private String estado;
     private int idCiclo,envio_todos;
-    private int leida,favorita,compartida;
-
+    private int leida,favorita,compartida,eliminada;
+    boolean selected;
     public Circular(String idCircular, String nombre, String fecha1, String fecha2, String estado,
                     int idCiclo, int envio_todos) {
         this.idCircular = idCircular;
@@ -20,7 +20,7 @@ public class Circular {
     }
 
     public Circular(String idCircular, String nombre, String textoCircular,
-                    String estado,int leida,int favorita,int compartida) {
+                    String estado,int leida,int favorita,int compartida, int eliminada) {
         this.idCircular = idCircular;
         this.nombre = nombre;
         this.textoCircular = textoCircular;
@@ -28,6 +28,7 @@ public class Circular {
         this.leida = leida;
         this.favorita = favorita;
         this.compartida = compartida;
+        this.eliminada = eliminada;
     }
 
     //Esto es para el detalle
@@ -55,6 +56,39 @@ public class Circular {
         this.compartida = compartida;
     }
 
+
+    public Circular(String idCircular, String encabezado, String nombre,
+                    String textoCircular, String fecha1, String fecha2, String estado,
+                    int leida,int favorita,int compartida, int eliminada) {
+        this.idCircular = idCircular;
+        this.encabezado = encabezado;
+        this.nombre = nombre;
+        this.textoCircular = textoCircular;
+        this.fecha1 = fecha1;
+        this.fecha2 = fecha2;
+        this.estado = estado;
+        this.leida = leida;
+        this.favorita = favorita;
+        this.compartida = compartida;
+        this.eliminada = eliminada;
+    }
+
+
+    public int getEliminada() {
+        return eliminada;
+    }
+
+    public void setEliminada(int eliminada) {
+        this.eliminada = eliminada;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
     public int getLeida() {
         return leida;

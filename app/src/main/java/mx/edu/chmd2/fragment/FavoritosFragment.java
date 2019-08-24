@@ -3,12 +3,18 @@ package mx.edu.chmd2.fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -26,15 +32,16 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import mx.edu.chmd2.AppCHMD;
+import mx.edu.chmd2.CircularActivity;
 import mx.edu.chmd2.CircularDetalleActivity;
 import mx.edu.chmd2.R;
 import mx.edu.chmd2.adapter.CircularesAdapter;
 import mx.edu.chmd2.modelos.Circular;
 
 public class FavoritosFragment extends Fragment {
-    ListView lstCirculares;
+    public ListView lstCirculares;
     ArrayList<Circular> circulares = new ArrayList<>();
-    CircularesAdapter adapter = null;
+    public CircularesAdapter adapter = null;
     static String METODO="getCircularesFavoritas.php";
     static String BASE_URL;
     static String RUTA;
@@ -61,7 +68,7 @@ public class FavoritosFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_circulares, container, false);
         lstCirculares = v.findViewById(R.id.lstCirculares);
 
-
+        lstCirculares.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         lstCirculares.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -185,5 +192,34 @@ public class FavoritosFragment extends Fragment {
         // Adding request to request queue
         AppCHMD.getInstance().addToRequestQueue(req);
     }
+
+
+
+    @Override
+    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.menu_circular, menu);
+        MenuItem item = menu.findItem(R.id.searchBar);
+        SearchView sv = new SearchView(((CircularActivity) getActivity()).getSupportActionBar().getThemedContext());
+        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+        MenuItemCompat.setActionView(item, sv);
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                System.out.println("search query submit");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                try {
+                    adapter.getFilter().filter(newText);
+                }catch (Exception ex){
+
+                }
+                return true;
+            }
+        });
+    }
+
 
 }

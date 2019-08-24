@@ -13,6 +13,23 @@ public class DBCircular extends Model {
     public String nombre;
     @Column(name="textoCircular")
     public String textoCircular;
-    @Column(name="estado")
-    public String estado;
+    @Column(name="no_leida")
+    public int no_leida;
+    @Column(name="leida")
+    public int leida;
+    @Column(name="favorita")
+    public int favorita;
+    @Column(name="compartida")
+    public int compartida;
+    @Column(name="eliminada")
+    public int eliminada;
+    @Column(name="idUsuario")
+    public int idUsuario;
+
+    @Column(name="created_at")
+    public String created_at;
+
+    @Column(name="updated_at")
+    public String updated_at;
+
 }

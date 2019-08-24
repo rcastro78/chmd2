@@ -15,10 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import mx.edu.chmd2.adapter.TabAdapter;
 import mx.edu.chmd2.fragment.CompartidosFragment;
+import mx.edu.chmd2.fragment.EliminadasFragment;
 import mx.edu.chmd2.fragment.FavoritosFragment;
 import mx.edu.chmd2.fragment.LeidosFragment;
 import mx.edu.chmd2.fragment.NoLeidosFragment;
@@ -33,6 +36,8 @@ public class CircularActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private TabAdapter adapter;
     private TabLayout tabLayout;
+    private SearchView searchView;
+    private Fragment f;
     TextView lblEncabezado;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +51,14 @@ public class CircularActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CircularActivity.this, MenuCircularesActivity.class);
+                Intent intent = new Intent(CircularActivity.this, PrincipalActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
 
         lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
+        searchView = findViewById(R.id.searchView);
         lblEncabezado.setText("Circulares");
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -62,12 +68,90 @@ public class CircularActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         adapter = new TabAdapter(getSupportFragmentManager());
         adapter.addFragment(new TodasCircularesFragment(), "Todas");
-        adapter.addFragment(new LeidosFragment(), "Leídas");
         adapter.addFragment(new NoLeidosFragment(), "No Leídas");
         adapter.addFragment(new FavoritosFragment(), "Favoritas");
         adapter.addFragment(new CompartidosFragment(), "Compartidas");
+        adapter.addFragment(new EliminadasFragment(), "Papelera");
         mViewPager.setAdapter(adapter);
+
+
+
+
         tabLayout.setupWithViewPager(mViewPager);
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                try {
+
+
+                    if(mViewPager.getCurrentItem()==0){
+                        TodasCircularesFragment fragment = (TodasCircularesFragment)mViewPager
+                                .getAdapter()
+                                .instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                        fragment.adapter.getFilter().filter(newText);
+                        fragment.adapter.notifyDataSetChanged();
+                        fragment.lstCirculares.setAdapter(fragment.adapter);
+                    }
+
+
+                    if(mViewPager.getCurrentItem()==1){
+                        NoLeidosFragment fragment = (NoLeidosFragment)mViewPager
+                                .getAdapter()
+                                .instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                        fragment.adapter.getFilter().filter(newText);
+                        fragment.adapter.notifyDataSetChanged();
+                        fragment.lstCirculares.setAdapter(fragment.adapter);
+                    }
+
+                    if(mViewPager.getCurrentItem()==2){
+                        FavoritosFragment fragment = (FavoritosFragment)mViewPager
+                                .getAdapter()
+                                .instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                        fragment.adapter.getFilter().filter(newText);
+                        fragment.adapter.notifyDataSetChanged();
+                        fragment.lstCirculares.setAdapter(fragment.adapter);
+                    }
+
+                    if(mViewPager.getCurrentItem()==3){
+                        CompartidosFragment fragment = (CompartidosFragment)mViewPager
+                                .getAdapter()
+                                .instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                        fragment.adapter.getFilter().filter(newText);
+                        fragment.adapter.notifyDataSetChanged();
+                        fragment.lstCirculares.setAdapter(fragment.adapter);
+                    }
+
+
+                    if(mViewPager.getCurrentItem()==4){
+                        EliminadasFragment fragment = (EliminadasFragment)mViewPager
+                                .getAdapter()
+                                .instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                        fragment.adapter.getFilter().filter(newText);
+                        fragment.adapter.notifyDataSetChanged();
+                        fragment.lstCirculares.setAdapter(fragment.adapter);
+                    }
+
+                }catch (Exception ex){
+                    Toast.makeText(getApplicationContext(),ex.getMessage(),Toast.LENGTH_LONG).show();
+                }
+
+
+
+
+                return true;
+            }
+        });
+
+
+
     }
 
 

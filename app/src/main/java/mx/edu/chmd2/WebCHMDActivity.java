@@ -51,7 +51,7 @@ WebView webView;
         webView = findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setBuiltInZoomControls(true);
-        webView.setWebViewClient(wvc);
+        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl("https://www.chmd.edu.mx/pruebascd/icloud/");
 
 
@@ -59,33 +59,7 @@ WebView webView;
 
 
 
-    public WebViewClient wvc =  new WebViewClient() {
 
-        @SuppressWarnings("deprecation")
-        public WebResourceResponse shouldInterceptRequest(WebView view, String url){
-            try {
-                final String acToken = sharedPreferences.getString("idToken", "DEFAULT");
-
-                OkHttpClient okHttpClient = new OkHttpClient();
-                Request request = new Request.Builder().url(url).addHeader("Authorization" , "Bearer " + acToken)
-                        .build();
-
-                Response response = okHttpClient.newCall(request).execute();
-
-                return new WebResourceResponse(response.header("content-type", response.body().contentType().type()),
-                        response.header("content-encoding", "utf-8"),
-                        response.body().byteStream());
-
-
-            } catch (ClientProtocolException e) {
-
-                return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-    };
 
 
 }

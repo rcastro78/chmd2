@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -25,7 +26,7 @@ import com.google.android.gms.tasks.Task;
 import mx.edu.chmd2.validaciones.ValidarPadreActivity;
 
 public class InicioActivity extends AppCompatActivity {
-FloatingActionButton fabLogin;
+ImageButton fabLogin;
     GoogleSignInOptions gso;
     GoogleSignInClient mGoogleSignInClient;
     static int RC_SIGN_IN=999;

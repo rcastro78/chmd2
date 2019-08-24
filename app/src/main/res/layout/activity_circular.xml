@@ -8,6 +8,8 @@
     android:fitsSystemWindows="true"
     tools:context=".CircularActivity">
 
+
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -21,7 +23,11 @@
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
+        <SearchView android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="@color/colorAccent"
+            />
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
@@ -31,6 +37,7 @@
                 android:id="@+id/tabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:text="Todas" />
 
             <com.google.android.material.tabs.TabItem
@@ -58,7 +65,15 @@
                 android:text="Compartidos" />
 
         </com.google.android.material.tabs.TabLayout>
+
+
+
+
+
     </com.google.android.material.appbar.AppBarLayout>
+
+
+
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/container"

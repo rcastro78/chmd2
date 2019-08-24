@@ -21,17 +21,17 @@
 
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/fabLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
         android:clickable="true"
         app:fabSize="normal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="12dp"
         app:elevation="6dp"
-        app:srcCompat="@drawable/login01" />
+        android:background="@drawable/log_in" />
 
     <ImageView
         android:id="@+id/imageView"

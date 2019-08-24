@@ -21,6 +21,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -59,6 +62,8 @@ public class PrincipalActivity extends AppCompatActivity {
     static String METODO_REG="registrarDispositivo.php";
     ArrayList<Usuario> usuario = new ArrayList<>();
     static String TAG=PrincipalActivity.class.getName();
+    GoogleSignInClient mGoogleSignInClient;
+    GoogleSignInOptions gso;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +80,11 @@ public class PrincipalActivity extends AppCompatActivity {
         Uri uri = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.video_app);
         videoview.setVideoURI(uri);
         videoview.start();
-
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestProfile()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         correo = sharedPreferences.getString("email","");
 
@@ -110,13 +119,31 @@ public class PrincipalActivity extends AppCompatActivity {
                     Intent intent = new Intent(PrincipalActivity.this,WebCHMDActivity.class);
                     startActivity(intent);
                 }
+
+                if(m.getIdMenu()==3){
+                    //Cerrar Sesión
+                    try{
+                        mGoogleSignInClient.signOut();
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("email","");
+                        editor.putString("nombre","");
+                        editor.putString("userPic","");
+                        editor.putString("idToken","");
+                        editor.commit();
+                        Intent intent = new Intent(PrincipalActivity.this,InicioActivity.class);
+                        startActivity(intent);
+                    }catch (Exception ex){
+
+                    }
+                }
             }
         });
     }
 
     private void llenarMenu(){
-        items.add(new Menu(1,"Circulares",R.drawable.appmenu06));
-        items.add(new Menu(2,"Mi Maguen",R.drawable.appmenu06));
+        items.add(new Menu(1,"Circulares",R.drawable.circulares));
+        items.add(new Menu(2,"Mi Maguen",R.drawable.mi_maguen));
+        items.add(new Menu(3,"Cerrar Sesión",R.drawable.appmenu09));
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);
     }
