@@ -9,9 +9,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +51,7 @@ import java.util.List;
 
 import mx.edu.chmd2.adapter.CircularesAdapter;
 import mx.edu.chmd2.modelos.Circular;
+import mx.edu.chmd2.utilerias.OnSwipeTouchListener;
 
 public class CircularDetalleActivity extends AppCompatActivity {
     static String METODO="getCircularId2.php";
@@ -52,14 +60,16 @@ public class CircularDetalleActivity extends AppCompatActivity {
     static String METODO_NOLEER="noleerCircular.php";
     static String METODO_DEL="eliminarCircular.php";
     static String METODO_FAV="favCircular.php";
+    static String METODO_COMPARTIR="compartirCircular.php";
     static String BASE_URL;
     static String RUTA;
+    private OnSwipeTouchListener onSwipeTouchListener;
     SharedPreferences sharedPreferences;
-    TextView lblTitulo,lblEncabezado;
+    TextView lblTitulo,lblTitulo2,lblEncabezado;
     WebView wvwDetalleCircular;
     String idCircular;
     String idUsuario,rsp;
-    ImageView imgEliminarSeleccionados,imgMoverFavSeleccionados,imgMoverNoLeidos;
+    ImageView imgEliminarSeleccionados,imgMoverFavSeleccionados,imgMoverNoLeidos,imgCompartir;
     ImageView btnSiguiente,btnAnterior;
     Typeface t;
     int pos=0;
@@ -83,19 +93,42 @@ public class CircularDetalleActivity extends AppCompatActivity {
         });
         t = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedBold_21016.ttf");
         lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
-        lblEncabezado.setText("Detalle de la circular");
+        lblEncabezado.setText("Circular");
         lblEncabezado.setTypeface(t);
 
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         lblTitulo = findViewById(R.id.lblTitulo);
+        lblTitulo2 = findViewById(R.id.lblTitulo2);
         imgMoverFavSeleccionados = findViewById(R.id.imgMoverFavSeleccionados);
         imgEliminarSeleccionados = findViewById(R.id.imgEliminarSeleccionados);
         imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);
+        imgCompartir = findViewById(R.id.imgMoverComp);
         btnSiguiente = findViewById(R.id.btnSiguiente);
         btnAnterior = findViewById(R.id.btnAnterior);
-        getCirculares(1660);
+        getCirculares(5);
+
+        imgCompartir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
+                builder.setTitle("Compartir Circular");
+                builder.setMessage("¿Desea compartir esta circular?");
+                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new CompartirAsyncTask(idCircular,"5").execute();
+                        //Compartir
+
+                    }
+                });
+                builder.setNegativeButton("Cancelar", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
 
 
         imgEliminarSeleccionados.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +140,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       new EliminaAsyncTask(idCircular,"1660").execute();
+                       new EliminaAsyncTask(idCircular,"5").execute();
                     }
                 });
                 builder.setNegativeButton("Cancelar", null);
@@ -126,7 +159,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new FavAsyncTask(idCircular,"1660").execute();
+                        new FavAsyncTask(idCircular,"5").execute();
                     }
                 });
                 builder.setNegativeButton("Cancelar", null);
@@ -145,7 +178,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new NoLeerAsyncTask(idCircular,"1660").execute();
+                        new NoLeerAsyncTask(idCircular,"5").execute();
                     }
                 });
                 builder.setNegativeButton("Cancelar", null);
@@ -156,10 +189,127 @@ public class CircularDetalleActivity extends AppCompatActivity {
 
         wvwDetalleCircular = findViewById(R.id.wvwDetalleCircular);
         wvwDetalleCircular.getSettings().setJavaScriptEnabled(true);
-        lblTitulo.setText(getIntent().getStringExtra("tituloCircular"));
+        wvwDetalleCircular.setWebViewClient(new WebViewClient());
+        wvwDetalleCircular.getSettings().setSupportZoom(true);
+        wvwDetalleCircular.getSettings().setBuiltInZoomControls(true);
+        wvwDetalleCircular.getSettings().setDisplayZoomControls(true);
+        wvwDetalleCircular.getSettings().setJavaScriptEnabled(true);
+        wvwDetalleCircular.setClickable(true);
+
+        //cortar el título por los espacios
+        String[] titulo = getIntent().getStringExtra("tituloCircular").split(" ");
+        int totalElementos = titulo.length;
+        int totalEspacios = totalElementos-1;
+        if(totalElementos>2){
+            lblTitulo.setText(titulo[0]+" "+titulo[1]);
+            String t="";
+            //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
+            for(int i=2; i<totalElementos; i++){
+                t += titulo[i]+" ";
+
+            }
+            lblTitulo2.setVisibility(View.VISIBLE);
+
+            lblTitulo2.setText(t);
+        }else{
+            lblTitulo2.setVisibility(View.INVISIBLE);
+            lblTitulo.setText(getIntent().getStringExtra("tituloCircular"));
+        }
+
+
         idCircular = getIntent().getStringExtra("idCircular");
-        new RegistrarLecturaAsyncTask(idCircular,"1660").execute();
+        new RegistrarLecturaAsyncTask(idCircular,"5").execute();
         wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
+
+        onSwipeTouchListener = new OnSwipeTouchListener() {
+            public void onSwipeRight() {
+                //Toast.makeText(CircularDetalleActivity.this, "der.", Toast.LENGTH_SHORT).show();
+                if(pos>0){
+                    for(int i=0; i<circulares.size(); i++){
+                        if(circulares.get(i).getIdCircular()==idCircular)
+                            pos=i;
+                    }
+
+                    pos = pos - 1;
+                    idCircular = circulares.get(pos).getIdCircular();
+                    new RegistrarLecturaAsyncTask(idCircular,"5").execute();
+                    wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
+                    //lblTitulo.setText(circulares.get(pos).getNombre());
+
+                    String tituloCompleto = circulares.get(pos).getNombre();
+                    String[] titulo = tituloCompleto.split(" ");
+                    int totalElementos = titulo.length;
+                    if(totalElementos>2){
+                        lblTitulo.setText(titulo[0]+" "+titulo[1]);
+                        String t="";
+                        //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
+                        for(int i=2; i<totalElementos; i++){
+                            t += titulo[i]+" ";
+
+                        }
+                        lblTitulo2.setVisibility(View.VISIBLE);
+
+                        lblTitulo2.setText(t);
+                    }else{
+                        lblTitulo2.setVisibility(View.INVISIBLE);
+                        lblTitulo.setText(tituloCompleto);
+                    }
+
+                }else {
+                    pos = circulares.size() - 1;
+                }
+
+            }
+            public void onSwipeLeft() {
+               // Toast.makeText(CircularDetalleActivity.this, "izq.", Toast.LENGTH_SHORT).show();
+
+                if(pos<circulares.size()){
+                    for(int i=0; i<circulares.size(); i++){
+                        if(circulares.get(i).getIdCircular()==idCircular)
+                            pos=i;
+                    }
+
+                    //despues de obtenerla pasar a la siguiente circular
+                    pos = pos+1;
+                    idCircular = circulares.get(pos).getIdCircular();
+                    new RegistrarLecturaAsyncTask(idCircular,"5").execute();
+                    wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
+                    //lblTitulo.setText(circulares.get(pos).getNombre());
+
+
+                    String tituloCompleto = circulares.get(pos).getNombre();
+                    String[] titulo = tituloCompleto.split(" ");
+                    int totalElementos = titulo.length;
+                    int totalEspacios = totalElementos-1;
+                    if(totalElementos>2){
+                        lblTitulo.setText(titulo[0]+" "+titulo[1]);
+                        String t="";
+                        //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
+                        for(int i=2; i<totalElementos; i++){
+                            t += titulo[i]+" ";
+
+                        }
+                        lblTitulo2.setVisibility(View.VISIBLE);
+
+                        lblTitulo2.setText(t);
+                    }else{
+                        lblTitulo2.setVisibility(View.INVISIBLE);
+                        lblTitulo.setText(tituloCompleto);
+                    }
+
+
+                }else{
+                    pos=0;
+                }
+
+
+
+            }
+        };
+
+        wvwDetalleCircular.setOnTouchListener(onSwipeTouchListener);
+
+
 
         btnAnterior.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,9 +323,30 @@ public class CircularDetalleActivity extends AppCompatActivity {
 
                     pos = pos - 1;
                     idCircular = circulares.get(pos).getIdCircular();
-                    new RegistrarLecturaAsyncTask(idCircular,"1660").execute();
+                    new RegistrarLecturaAsyncTask(idCircular,"5").execute();
                     wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
-                    lblTitulo.setText(circulares.get(pos).getNombre());
+                    //lblTitulo.setText(circulares.get(pos).getNombre());
+
+                    String tituloCompleto = circulares.get(pos).getNombre();
+                    String[] titulo = tituloCompleto.split(" ");
+                    int totalElementos = titulo.length;
+                    int totalEspacios = totalElementos-1;
+                    if(totalElementos>2){
+                        lblTitulo.setText(titulo[0]+" "+titulo[1]);
+                        String t="";
+                        //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
+                        for(int i=2; i<totalElementos; i++){
+                            t += titulo[i]+" ";
+
+                        }
+                        lblTitulo2.setVisibility(View.VISIBLE);
+
+                        lblTitulo2.setText(t);
+                    }else{
+                        lblTitulo2.setVisibility(View.INVISIBLE);
+                        lblTitulo.setText(tituloCompleto);
+                    }
+
 
                 }else {
                     pos = circulares.size() - 1;
@@ -198,7 +369,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                //despues de obtenerla pasar a la siguiente circular
                 pos = pos+1;
                 idCircular = circulares.get(pos).getIdCircular();
-                new RegistrarLecturaAsyncTask(idCircular,"1660").execute();
+                new RegistrarLecturaAsyncTask(idCircular,"5").execute();
                 wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
                 lblTitulo.setText(circulares.get(pos).getNombre());
                 }else{
@@ -210,6 +381,35 @@ public class CircularDetalleActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev){
+        onSwipeTouchListener.getGestureDetector().onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
+    }
+
+
+    /*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater findMenuItems = getMenuInflater();
+        findMenuItems.inflate(R.menu.menu_zoom, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.zoomIn:
+                wvwDetalleCircular.zoomIn();
+                break;
+            case R.id.zoomOut:
+                wvwDetalleCircular.zoomOut();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+*/
 
 
 
@@ -468,7 +668,79 @@ public class CircularDetalleActivity extends AppCompatActivity {
             return null;
         }
     }
+    private class CompartirAsyncTask extends AsyncTask<Void, Long, Boolean> {
+        private String idCircular;
+        private String idUsuario;
 
+        public CompartirAsyncTask(String idCircular, String idUsuario) {
+            this.idCircular = idCircular;
+            this.idUsuario = idUsuario;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("RESPONSE","ejecutando...");
+        }
+
+        public void registraLectura(){
+            HttpClient httpClient;
+            HttpPost httppost;
+            httpClient = new DefaultHttpClient();
+            httppost = new HttpPost(BASE_URL+RUTA+METODO_COMPARTIR);
+            try {
+                List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+                nameValuePairs.add(new BasicNameValuePair("circular_id",idCircular));
+                nameValuePairs.add(new BasicNameValuePair("usuario_id",idUsuario));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                HttpResponse response = httpClient.execute(httppost);
+                int responseCode = response.getStatusLine().getStatusCode();
+                Log.d("RESPONSE", ""+responseCode);
+                switch(responseCode) {
+                    case 200:
+                        HttpEntity entity = response.getEntity();
+                        if(entity != null) {
+                            String responseBody = EntityUtils.toString(entity);
+                            rsp=responseBody;
+                        }
+                        break;
+                }
+                Log.d("RESPONSE", rsp);
+
+
+
+
+            }catch (Exception e){
+                Log.d("RESPONSE",e.getMessage());
+            }
+
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            Log.d("RESPONSE","ejecutado.-");
+
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("text/html");
+            sharingIntent.putExtra(Intent.EXTRA_SUBJECT,"CHMD");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Te comparto la circular: "+wvwDetalleCircular.getUrl()+"");
+            startActivity(Intent.createChooser(sharingIntent, "Compartir mediante"));
+
+
+            //Intent intent = new Intent(CircularDetalleActivity.this,CircularActivity.class);
+            //startActivity(intent);
+            //finish();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            registraLectura();
+            return null;
+        }
+    }
 
     public void getCirculares(int usuario_id){
 

@@ -15,7 +15,7 @@
             android:tint="#fff"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_margin="6dp"
+            android:layout_margin="12dp"
             app:srcCompat="@drawable/app03" />
     </RelativeLayout>
 

@@ -56,7 +56,7 @@ public class CompartidosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getCirculares(1660);
+        getCirculares(5);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class CompartidosFragment extends Fragment {
     public void getCirculares(int usuario_id){
 
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final SimpleDateFormat formatoDestino = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
 
         JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO+"?usuario_id="+usuario_id,
                 new Response.Listener<JSONArray>() {

@@ -56,7 +56,7 @@ public class NoLeidosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getCirculares(1660);
+        getCirculares(5);
     }
 
     @Override

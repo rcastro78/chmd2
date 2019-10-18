@@ -3,7 +3,7 @@ package mx.edu.chmd2.modelos;
 public class Usuario {
     private String idUsuario;
     private String nombre,numero,telefono,correo,calle,cp,ent,
-            familia,estatus,tipo,correo2,foto,celular;
+            familia,estatus,tipo,correo2,foto,celular,responsable;
 
     public Usuario() {
     }
@@ -25,6 +25,26 @@ public class Usuario {
         this.correo2 = correo2;
         this.foto = foto;
         this.celular = celular;
+    }
+
+
+    public Usuario(String idUsuario, String nombre, String numero,
+                   String telefono, String responsable, String familia) {
+        this.idUsuario = idUsuario;
+        this.nombre = nombre;
+        this.numero = numero;
+        this.telefono = telefono;
+        this.responsable = responsable;
+        this.familia = familia;
+    }
+
+
+    public String getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(String responsable) {
+        this.responsable = responsable;
     }
 
     public String getIdUsuario() {

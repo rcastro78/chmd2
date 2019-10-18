@@ -2,6 +2,7 @@ package mx.edu.chmd2;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
@@ -59,6 +60,7 @@ public class PrincipalActivity extends AppCompatActivity {
     static String RUTA;
     SharedPreferences sharedPreferences;
     String correo,rsp;
+    static String GET_USUARIO="getUsuarioEmail.php";
     static String METODO_REG="registrarDispositivo.php";
     ArrayList<Usuario> usuario = new ArrayList<>();
     static String TAG=PrincipalActivity.class.getName();
@@ -87,7 +89,11 @@ public class PrincipalActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         correo = sharedPreferences.getString("email","");
+        //Para pruebas
+        getUsuario(correo);
 
+        //
+        // getUsuario(correo);
         FirebaseInstanceId.getInstance().getInstanceId() .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
@@ -121,6 +127,11 @@ public class PrincipalActivity extends AppCompatActivity {
                 }
 
                 if(m.getIdMenu()==3){
+                    Intent intent = new Intent(PrincipalActivity.this,CredencialActivity.class);
+                    startActivity(intent);
+                }
+
+                if(m.getIdMenu()==4){
                     //Cerrar Sesión
                     try{
                         mGoogleSignInClient.signOut();
@@ -143,7 +154,8 @@ public class PrincipalActivity extends AppCompatActivity {
     private void llenarMenu(){
         items.add(new Menu(1,"Circulares",R.drawable.circulares));
         items.add(new Menu(2,"Mi Maguen",R.drawable.mi_maguen));
-        items.add(new Menu(3,"Cerrar Sesión",R.drawable.appmenu09));
+        items.add(new Menu(3,"Mi Credencial",R.drawable.credencial));
+        items.add(new Menu(4,"Cerrar Sesión",R.drawable.appmenu09));
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);
     }
@@ -219,6 +231,106 @@ public class PrincipalActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
+
+    public void getUsuario(String email){
+
+
+        JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+GET_USUARIO+"?correo="+email,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        /*
+                         * [{"id":"1","nombre":"SITT COHEN RAUL","numero":"0244","telefono":"52-51-91-34",
+                         * "correo":"raul@gconcreta.com","calle":"Ahuehuetes Nte. 1333- T. Vendome 304",
+                         * "colonia":"Bosques De Las Lomas","cp":"11700","ent":"CUDAD DE MEXICO","familia":"SITT SASSON",
+                         * "estatus":"2","fecha":"2019-08-22 16:36:03","tipo":"3","correo2":"raul@gconcreta.com",
+                         * "fotografia":"C:\\IDCARDDESIGN\\CREDENCIALES\\padres\\rosa maya.JPG","celular":"04455-51002067","token":"",
+                         * "vigencia":"1","responsable":"PADRE","ntarjeton1":"0","ntarjeton2":"0","perfil_admin":"0"}]
+                         * */
+
+
+/*
+* String idUsuario, String nombre, String numero,
+                   String telefono, String correo, String familia
+* */
+
+                        try {
+                            for(int i=0; i<response.length(); i++){
+                                JSONObject jsonObject = (JSONObject) response
+                                        .get(i);
+                                String idUsuario = jsonObject.getString("id");
+                                String nombre = jsonObject.getString("nombre");
+                                String numero = jsonObject.getString("numero");
+                                String telefono = jsonObject.getString("telefono");
+                                String responsable = jsonObject.getString("responsable");
+                                String familia = jsonObject.getString("familia");
+                                String rutaFoto = jsonObject.getString("fotografia");
+                                String[] ruta = rutaFoto.split("\\\\");
+                                String foto = ruta[4];
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("idUsuarioCredencial",idUsuario);
+                                editor.putString("nombreCredencial",nombre);
+                                editor.putString("numeroCredencial",numero);
+                                editor.putString("telefonoCredencial",telefono);
+                                editor.putString("responsableCredencial",responsable);
+                                editor.putString("familiaCredencial",familia);
+                                editor.putString("fotoCredencial",foto);
+                                //Toast.makeText(getApplicationContext(),foto,Toast.LENGTH_LONG).show();
+                                editor.commit();
+
+
+                            }
+
+
+
+
+
+                        }catch (JSONException e)
+                        {
+                            e.printStackTrace();
+
+                            Toast.makeText(getApplicationContext(),
+                                    "Error: "+e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        //TODO: Cambiarlo cuando pase a prueba en MX
+                        // if (existe.equalsIgnoreCase("1")) {
+                        //llenado de datos
+                        //eliminar circulares y guardar las primeras 10 del registro
+                        //Borra toda la tabla
+                        /*new Delete().from(DBCircular.class).execute();
+
+                        for(int i=0; i<10; i++){
+                            DBCircular dbCircular = new DBCircular();
+                            dbCircular.idCircular = circulares.get(i).getIdCircular();
+                            dbCircular.estado = circulares.get(i).getEstado();
+                            dbCircular.nombre = circulares.get(i).getNombre();
+                            dbCircular.textoCircular = circulares.get(i).getTextoCircular();
+                            dbCircular.save();
+                        }*/
+
+
+
+                    }
+                }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                VolleyLog.d("ERROR", "Error: " + error.getMessage());
+
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Adding request to request queue
+        AppCHMD.getInstance().addToRequestQueue(req);
+    }
+
 
 
 }

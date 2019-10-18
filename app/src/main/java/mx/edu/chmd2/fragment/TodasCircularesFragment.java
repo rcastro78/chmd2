@@ -83,7 +83,7 @@ public CircularesAdapter adapter = null;
     SharedPreferences sharedPreferences;
     ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados;
     boolean todos=false;
-    int idUsuario=1660;
+    int idUsuario=5;
     @Override
     public void onPause() {
         super.onPause();
@@ -93,6 +93,7 @@ public CircularesAdapter adapter = null;
     @Override
     public void onResume() {
         super.onResume();
+        circulares.clear();
         if(hayConexion())
             getCirculares(idUsuario);
         else
@@ -128,7 +129,7 @@ public CircularesAdapter adapter = null;
 
                         for (int i = 0; i < seleccionados.size(); i++) {
                             Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                            new FavAsyncTask(c.getIdCircular(),"1660").execute();
+                            new FavAsyncTask(c.getIdCircular(),"5").execute();
 
                         }
 
@@ -160,7 +161,7 @@ public CircularesAdapter adapter = null;
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new RegistrarLecturaAsyncTask(c.getIdCircular(),"1660").execute();
+                                new RegistrarLecturaAsyncTask(c.getIdCircular(),"5").execute();
 
                             }
 
@@ -190,7 +191,7 @@ public CircularesAdapter adapter = null;
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new EliminaAsyncTask(c.getIdCircular(),"1660").execute();
+                                new EliminaAsyncTask(c.getIdCircular(),"5").execute();
 
                             }
 
@@ -237,7 +238,7 @@ public CircularesAdapter adapter = null;
 
     public void leeCirculares(int idUsuario){
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final SimpleDateFormat formatoDestino = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
 
         ArrayList<DBCircular> dbCirculares = new ArrayList<>();
         List<DBCircular> list = new Select().from(DBCircular.class).where("idUsuario=?",idUsuario).execute();
@@ -285,7 +286,7 @@ public CircularesAdapter adapter = null;
     public void getCirculares(int usuario_id){
 
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final SimpleDateFormat formatoDestino = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
 
         JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO+"?usuario_id="+usuario_id,
                 new Response.Listener<JSONArray>() {
@@ -340,9 +341,9 @@ public CircularesAdapter adapter = null;
                        //llenado de datos
                         //eliminar circulares y guardar las primeras 10 del registro
                         //Borra toda la tabla
-                        new Delete().from(DBCircular.class).execute();
+                        //new Delete().from(DBCircular.class).execute();
 
-                        for(int i=0; i<10; i++){
+                        /*for(int i=0; i<10; i++){
                             DBCircular dbCircular = new DBCircular();
                             dbCircular.idCircular = circulares.get(i).getIdCircular();
                             dbCircular.leida = circulares.get(i).getLeida();
@@ -361,10 +362,14 @@ public CircularesAdapter adapter = null;
                             dbCircular.created_at = circulares.get(i).getFecha1();
                             dbCircular.updated_at = circulares.get(i).getFecha2();
                             Log.w("GUARDANDO",""+dbCircular.save());
+                        }*/
+                        try{
+                            adapter = new CircularesAdapter(getActivity(),circulares);
+                            lstCirculares.setAdapter(adapter);
+                        }catch(Exception ex){
+                            Toast.makeText(getActivity().getApplicationContext(),ex.getMessage(),Toast.LENGTH_LONG).show();
                         }
 
-                        adapter = new CircularesAdapter(getActivity(),circulares);
-                        lstCirculares.setAdapter(adapter);
 
 
                     }

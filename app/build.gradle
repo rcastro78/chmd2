@@ -22,12 +22,11 @@ android {
         abortOnError false
     }
 
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
 
 }
-
 
 
 repositories {
@@ -51,13 +50,11 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     implementation 'org.apache.httpcomponents:httpmime:4.5.6'
-
     implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation 'com.google.firebase:firebase-messaging:19.0.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.0.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.0.0'
-
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 }
 
 apply plugin: 'com.google.gms.google-services'

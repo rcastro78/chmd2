@@ -34,7 +34,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="12dp"
                     android:id="@+id/imgMoverFavSeleccionados"
                     android:clickable="true"
 
@@ -50,7 +50,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="12dp"
                     android:id="@+id/imgMoverComp"
                     android:clickable="true"
                     android:src="@drawable/appmenu08"/>
@@ -65,7 +65,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="12dp"
                     android:id="@+id/imgMoverNoLeidos"
                     android:clickable="true"
 
@@ -126,7 +126,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="12dp"
                     android:id="@+id/imgEliminarSeleccionados"
                     android:clickable="true"
                     android:src="@drawable/appmenu07"/>
@@ -143,30 +143,55 @@
             android:weightSum="100">
 
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="90"
-                android:layout_margin="12dp"
-                android:background="@color/colorPrimary">
+                android:layout_weight="85"
+                android:layout_margin="6dp"
+                android:weightSum="100"
+                android:orientation="vertical"
+                >
 
             <TextView
                 android:id="@+id/lblTitulo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Titulo"
                 android:padding="4dp"
+                android:background="@color/textoClaro"
+                android:gravity="center_horizontal"
+                android:layout_weight="50"
+                android:layout_gravity="center_horizontal"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/textoMasOscuro"
                 android:textSize="16dp" />
-</RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/lblTitulo2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Titulo"
+                    android:background="@color/textoOscuro"
+                    android:gravity="center_horizontal"
+                    android:padding="4dp"
+                    android:layout_weight="50"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_below="@+id/lblTitulo"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/textoMasOscuro"
+                    android:visibility="invisible"
+                    android:textSize="16dp" />
+
+</LinearLayout>
             <WebView
                 android:id="@+id/wvwDetalleCircular"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/searchBar"
-                android:layout_weight="10"></WebView>
+                android:layout_weight="15"></WebView>
 
         </LinearLayout>
 

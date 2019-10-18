@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -23,6 +27,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import mx.edu.chmd2.validaciones.ValidarPadreActivity;
 
 public class InicioActivity extends AppCompatActivity {
@@ -34,10 +46,17 @@ ImageButton fabLogin;
     static String TAG = InicioActivity.class.getName();
     VideoView videoview;
     int valida;
+    static String BASE_URL;
+    static String RUTA;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
+        BASE_URL = this.getString(R.string.BASE_URL);
+        RUTA = this.getString(R.string.PATH);
+
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         valida = sharedPreferences.getInt("cuentaValida",0);
         videoview = findViewById(R.id.videoView);
@@ -132,6 +151,7 @@ ImageButton fabLogin;
         }
 
     }
+
 
 
 

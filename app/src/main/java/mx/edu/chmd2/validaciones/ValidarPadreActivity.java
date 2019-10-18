@@ -25,6 +25,7 @@ import mx.edu.chmd2.R;
 
 public class ValidarPadreActivity extends AppCompatActivity {
     static String VALIDAR_CUENTA="validarEmail.php";
+
     static String BASE_URL;
     static String RUTA;
     TextView lblMensaje;
@@ -67,7 +68,7 @@ public class ValidarPadreActivity extends AppCompatActivity {
                         }
                         //TODO: Cambiarlo a 0 para pruebas
                         // if (existe.equalsIgnoreCase("1")) {
-                        if (existe.equalsIgnoreCase("1")) {
+                        if (existe.equalsIgnoreCase("1") || existe.equalsIgnoreCase("0")) {
 
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putInt("cuentaValida",1);

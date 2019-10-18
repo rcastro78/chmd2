@@ -5,8 +5,12 @@ import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -15,10 +19,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import org.apache.http.client.ClientProtocolException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -28,6 +34,15 @@ public class WebCHMDActivity extends AppCompatActivity {
 TextView lblTextToolbar;
 WebView webView;
     SharedPreferences sharedPreferences;
+
+    private String CLIENT_ID="144850677714-gv1gkasv7i5t5284v6ftn7npijemp0ks.apps.googleusercontent.com";
+    private static String REDIRECT_URI="http://www.chmd.edu.mx";
+    private static String GRANT_TYPE="authorization_code";
+    private static String TOKEN_URL ="https://accounts.google.com/o/oauth2/token";
+    private static String OAUTH_URL ="https://accounts.google.com/o/oauth2/auth";
+    private static String OAUTH_SCOPE = "email%20profile";
+    private static String CLIENT_SECRET = "aegzGWfkW19XGfIArXxM22qE";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +66,45 @@ WebView webView;
         webView = findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setBuiltInZoomControls(true);
-        webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://www.chmd.edu.mx/pruebascd/icloud/");
+        //webView.setWebViewClient(new WebViewClient());
+        String url = "https://www.chmd.edu.mx/pruebascd/icloud/";
+        String ua = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0";
+        Log.w("TOKEN",sharedPreferences.getString("idToken",""));
+        //webView.loadUrl(OAUTH_URL+"?redirect_uri="+REDIRECT_URI+"&response_type=code&client_id="+CLIENT_ID+"&scope="+OAUTH_SCOPE);
+        //webView.loadUrl(OAUTH_URL+"?redirect_uri="+REDIRECT_URI+"&response_type=code&client_id="+CLIENT_ID+"&scope="+OAUTH_SCOPE);
+
+
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setUserAgentString(ua);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.loadUrl(url);
+        //webView.loadUrl(OAUTH_URL+"?redirect_uri="+REDIRECT_URI+"&response_type=code&client_id="+client_id+"&scope="+OAUTH_SCOPE);
+
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon){
+                super.onPageStarted(view, url, favicon);
+
+            }
+            String authCode;
+            boolean authComplete=false;
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                if (url.contains("?code=") && authComplete != true) {
+                    Uri uri = Uri.parse(url);
+                    authCode = uri.getQueryParameter("code");
+                    //Log.i("", "CODE : " + authCode);
+                    Toast.makeText(getApplicationContext(),"CODE:"+authCode,Toast.LENGTH_LONG).show();
+                    authComplete = true;
+                }else{
+                    Toast.makeText(getApplicationContext(),"ERROR:"+url.toString(),Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        //webView.loadUrl(url, map);
 
 
     }
