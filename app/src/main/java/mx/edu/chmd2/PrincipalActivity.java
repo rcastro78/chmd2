@@ -154,7 +154,7 @@ public class PrincipalActivity extends AppCompatActivity {
     private void llenarMenu(){
         items.add(new Menu(1,"Circulares",R.drawable.circulares));
         items.add(new Menu(2,"Mi Maguen",R.drawable.mi_maguen));
-        items.add(new Menu(3,"Mi Credencial",R.drawable.credencial));
+        items.add(new Menu(3,"Mi Credencial",R.drawable.credencial01));
         items.add(new Menu(4,"Cerrar Sesión",R.drawable.appmenu09));
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);
