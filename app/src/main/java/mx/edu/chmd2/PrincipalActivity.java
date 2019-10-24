@@ -268,8 +268,17 @@ public class PrincipalActivity extends AppCompatActivity {
                                 String responsable = jsonObject.getString("responsable");
                                 String familia = jsonObject.getString("familia");
                                 String rutaFoto = jsonObject.getString("fotografia");
-                                String[] ruta = rutaFoto.split("\\\\");
-                                String foto = ruta[4];
+                                Log.d("PrincipalActivity",rutaFoto);
+                                String[] ruta;
+                                String foto;
+                                try{
+                                 ruta  = rutaFoto.split("\\\\");
+                                 foto = ruta[4];
+                                }catch (Exception ex){
+                                  foto="";
+                                }
+
+
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("idUsuarioCredencial",idUsuario);
                                 editor.putString("nombreCredencial",nombre);

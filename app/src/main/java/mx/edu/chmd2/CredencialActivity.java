@@ -71,13 +71,18 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         if (fotoUrl.length()<5){
             //No tiene foto
             fotoUrl = "http://chmd.chmd.edu.mx:65083/CREDENCIALES/padres/sinfoto.png";
+            Glide.with(this)
+                    .load(fotoUrl)
+                    .into(imgFotoPadre);
+        }else{
+            Glide.with(this)
+                    .load(BASE_URL_FOTO+fotoUrl)
+                    .into(imgFotoPadre);
         }
-
+       
 
         //Cargar la foto del padre
-        Glide.with(this)
-                .load(BASE_URL_FOTO+fotoUrl)
-                .into(imgFotoPadre);
+
 
         //generar QR a partir de la URL
         try{

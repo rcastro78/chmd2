@@ -125,7 +125,7 @@ ImageButton fabLogin;
 
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+
         if (result.isSuccess()) {
             GoogleSignInAccount account = result.getSignInAccount();
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -148,6 +148,7 @@ ImageButton fabLogin;
 
         }else{
             Log.w(TAG, "No se pudo iniciar sesión");
+            Toast.makeText(getApplicationContext(),"No se pudo iniciar sesión",Toast.LENGTH_LONG).show();
         }
 
     }
