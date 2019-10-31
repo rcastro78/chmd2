@@ -74,22 +74,32 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
             Glide.with(this)
                     .load(fotoUrl)
                     .into(imgFotoPadre);
+
+            try{
+                Bitmap bmp = crearQR(fotoUrl);
+                imgQR.setImageBitmap(bmp);
+            }catch(Exception ex){
+            }
+
         }else{
             Glide.with(this)
-                    .load(BASE_URL_FOTO+fotoUrl)
+                    .load(BASE_URL+fotoUrl)
                     .into(imgFotoPadre);
+
+            try{
+                Bitmap bmp = crearQR(BASE_URL_FOTO+fotoUrl);
+                imgQR.setImageBitmap(bmp);
+            }catch(Exception ex){
+            }
+
         }
-       
+
 
         //Cargar la foto del padre
 
 
         //generar QR a partir de la URL
-        try{
-            Bitmap bmp = crearQR(BASE_URL_FOTO+fotoUrl);
-            imgQR.setImageBitmap(bmp);
-        }catch(Exception ex){
-        }
+
 
 
 

@@ -97,10 +97,10 @@ WebView webView;
                     Uri uri = Uri.parse(url);
                     authCode = uri.getQueryParameter("code");
                     //Log.i("", "CODE : " + authCode);
-                    Toast.makeText(getApplicationContext(),"CODE:"+authCode,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"CODE:"+authCode,Toast.LENGTH_LONG).show();
                     authComplete = true;
                 }else{
-                    Toast.makeText(getApplicationContext(),"ERROR:"+url.toString(),Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"ERROR:"+url.toString(),Toast.LENGTH_LONG).show();
                 }
             }
         });

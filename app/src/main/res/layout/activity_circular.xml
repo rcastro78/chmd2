@@ -58,11 +58,7 @@
                 android:layout_height="wrap_content"
                 android:text="Papelera" />
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Compartidos" />
+
 
         </com.google.android.material.tabs.TabLayout>
 

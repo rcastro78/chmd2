@@ -287,6 +287,7 @@ public CircularesAdapter adapter = null;
 
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
+        final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd/MM/yyyy");
 
         JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO+"?usuario_id="+usuario_id,
                 new Response.Listener<JSONArray>() {
@@ -308,20 +309,25 @@ public CircularesAdapter adapter = null;
 
                                 }
                                 String strFecha1 = formatoDestino.format(date1);
-                                String strFecha2 = formatoDestino.format(date2);
+                                String strFecha2 = formatoDestino2.format(date2);
                                 String estado = jsonObject.getString("estatus");
                                 String favorito = jsonObject.getString("favorito");
                                 String leido = jsonObject.getString("leido");
                                 String compartida = jsonObject.getString("compartida");
-                                circulares.add(new Circular(idCircular,
-                                        "Circular No. "+idCircular,
-                                        nombre,"",
-                                        strFecha1,
-                                        strFecha2,
-                                        estado,
-                                        Integer.parseInt(leido),
-                                        Integer.parseInt(favorito),
-                                        Integer.parseInt(compartida) ));
+                                String eliminada = jsonObject.getString("eliminado");
+                                //No mostrar las eliminadas
+                                if(eliminada!="1"){
+                                    circulares.add(new Circular(idCircular,
+                                            "Circular No. "+idCircular,
+                                            nombre,"",
+                                            strFecha1,
+                                            strFecha2,
+                                            estado,
+                                            Integer.parseInt(leido),
+                                            Integer.parseInt(favorito),
+                                            Integer.parseInt(compartida) ));
+                                }
+
                                 //String idCircular, String encabezado, String nombre,
                                 //                    String textoCircular, String fecha1, String fecha2, String estado
 

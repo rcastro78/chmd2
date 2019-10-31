@@ -70,7 +70,7 @@ public class CircularActivity extends AppCompatActivity {
         adapter.addFragment(new TodasCircularesFragment(), "Todas");
         adapter.addFragment(new NoLeidosFragment(), "No Leídas");
         adapter.addFragment(new FavoritosFragment(), "Favoritas");
-        adapter.addFragment(new CompartidosFragment(), "Compartidas");
+        //adapter.addFragment(new CompartidosFragment(), "Compartidas");
         adapter.addFragment(new EliminadasFragment(), "Papelera");
         mViewPager.setAdapter(adapter);
 
@@ -197,7 +197,7 @@ public class CircularActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 5;
+            return 4;
         }
     }
 }

@@ -208,7 +208,7 @@ public class LeidosFragment extends Fragment {
 
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
-
+        final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd/MM/yyyy");
         JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO+"?usuario_id="+usuario_id,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -232,7 +232,7 @@ public class LeidosFragment extends Fragment {
 
                                 }
                                 String strFecha1 = formatoDestino.format(date1);
-                                String strFecha2 = formatoDestino.format(date2);
+                                String strFecha2 = formatoDestino2.format(date2);
                                 String estado = jsonObject.getString("estatus");
                                 String favorito = jsonObject.getString("favorito");
                                 String leido = jsonObject.getString("leido");

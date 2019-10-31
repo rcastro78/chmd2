@@ -126,8 +126,8 @@ public class CircularesAdapter extends BaseAdapter {
         holder.lblEncab.setText(c.getNombre());
         holder.lblNomCircular.setText(c.getEncabezado());
         holder.lblFecha1.setText(c.getFecha1());
-        //holder.lblFecha2.setText(c.getFecha2());
-        holder.lblFecha2.setText("");
+        holder.lblFecha2.setText(c.getFecha2());
+        //holder.lblFecha2.setText("");
 
         holder.chkSeleccion.setTag(position);
         holder.chkSeleccion.setChecked(items.get(position).isSelected());
