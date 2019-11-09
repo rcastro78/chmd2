@@ -88,7 +88,7 @@ public class PrincipalActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-        correo = sharedPreferences.getString("email","");
+        correo = sharedPreferences.getString("correoRegistrado","");
         //Para pruebas
         getUsuario(correo);
 
@@ -140,6 +140,9 @@ public class PrincipalActivity extends AppCompatActivity {
                         editor.putString("nombre","");
                         editor.putString("userPic","");
                         editor.putString("idToken","");
+                        editor.putInt("cuentaValida",0);
+
+
                         editor.commit();
                         Intent intent = new Intent(PrincipalActivity.this,InicioActivity.class);
                         startActivity(intent);
@@ -152,10 +155,10 @@ public class PrincipalActivity extends AppCompatActivity {
     }
 
     private void llenarMenu(){
-        items.add(new Menu(1,"Circulares",R.drawable.circulares));
-        items.add(new Menu(2,"Mi Maguen",R.drawable.mi_maguen));
-        items.add(new Menu(3,"Mi Credencial",R.drawable.credencial01));
-        items.add(new Menu(4,"Cerrar Sesión",R.drawable.appmenu09));
+        items.add(new Menu(1,"Circulares",R.drawable.circulares2));
+        items.add(new Menu(2,"Mi Maguen",R.drawable.maguen2));
+        items.add(new Menu(3,"Mi Credencial",R.drawable.credencial2));
+        items.add(new Menu(4,"Cerrar Sesión",R.drawable.cerrar2));
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);
     }
@@ -256,6 +259,20 @@ public class PrincipalActivity extends AppCompatActivity {
 * String idUsuario, String nombre, String numero,
                    String telefono, String correo, String familia
 * */
+                    //Toast.makeText(getApplicationContext(),""+response.length(),Toast.LENGTH_LONG).show();
+
+                        if(response.length()<=0){
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("idUsuarioCredencial","");
+                            editor.putString("nombreCredencial","");
+                            editor.putString("numeroCredencial","");
+                            editor.putString("telefonoCredencial","");
+                            editor.putString("responsableCredencial","");
+                            editor.putString("familiaCredencial","");
+                            editor.putString("fotoCredencial","");
+                            //Toast.makeText(getApplicationContext(),foto,Toast.LENGTH_LONG).show();
+                            editor.commit();
+                        }
 
                         try {
                             for(int i=0; i<response.length(); i++){

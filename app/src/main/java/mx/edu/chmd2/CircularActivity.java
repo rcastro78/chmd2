@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import mx.edu.chmd2.fragment.FavoritosFragment;
 import mx.edu.chmd2.fragment.LeidosFragment;
 import mx.edu.chmd2.fragment.NoLeidosFragment;
 import mx.edu.chmd2.fragment.TodasCircularesFragment;
+import mx.edu.chmd2.utilerias.CustomTabLayout;
 
 public class CircularActivity extends AppCompatActivity {
 
@@ -39,11 +42,22 @@ public class CircularActivity extends AppCompatActivity {
     private SearchView searchView;
     private Fragment f;
     TextView lblEncabezado;
+    Typeface tf;
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(CircularActivity.this, PrincipalActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_circular);
-
+        tf = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedBold_21016.ttf");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -60,12 +74,13 @@ public class CircularActivity extends AppCompatActivity {
         lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
         searchView = findViewById(R.id.searchView);
         lblEncabezado.setText("Circulares");
+        lblEncabezado.setTypeface(tf);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        TabLayout tabLayout = findViewById(R.id.tabs);
+        CustomTabLayout tabLayout = findViewById(R.id.tabs);
         adapter = new TabAdapter(getSupportFragmentManager());
         adapter.addFragment(new TodasCircularesFragment(), "Todas");
         adapter.addFragment(new NoLeidosFragment(), "No Leídas");
@@ -73,10 +88,6 @@ public class CircularActivity extends AppCompatActivity {
         //adapter.addFragment(new CompartidosFragment(), "Compartidas");
         adapter.addFragment(new EliminadasFragment(), "Papelera");
         mViewPager.setAdapter(adapter);
-
-
-
-
         tabLayout.setupWithViewPager(mViewPager);
 
 

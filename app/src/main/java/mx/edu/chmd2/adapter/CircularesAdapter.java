@@ -119,7 +119,7 @@ public class CircularesAdapter extends BaseAdapter {
         }
 
         if(c.getEliminada()==1){
-            holder.imgCircular.setImageResource(R.drawable.basurero_azul);
+            holder.imgCircular.setImageResource(R.drawable.basura);
             holder.llContainer.setBackgroundColor(Color.WHITE);
         }
 

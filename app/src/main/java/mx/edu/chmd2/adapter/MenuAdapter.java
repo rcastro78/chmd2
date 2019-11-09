@@ -2,6 +2,7 @@ package mx.edu.chmd2.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,8 @@ public class MenuAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.lblNomMenu = convertView.findViewById(R.id.lblNomMenu);
             holder.imgMenu = convertView.findViewById(R.id.imgMenu);
-
+            Typeface tf1 = Typeface.createFromAsset(activity.getAssets(),"fonts/GothamRoundedBold_21016.ttf");
+            holder.lblNomMenu.setTypeface(tf1);
 
             convertView.setTag(holder);
         }else{

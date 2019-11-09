@@ -39,7 +39,7 @@ public class ValidarPadreActivity extends AppCompatActivity {
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-        correo = sharedPreferences.getString("email","");
+        correo = sharedPreferences.getString("correoRegistrado","");
         validarCuenta(correo);
     }
 
@@ -72,7 +72,7 @@ public class ValidarPadreActivity extends AppCompatActivity {
 
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putInt("cuentaValida",1);
-                            editor.putString("correoRegistrado",email);
+                            editor.putString("email",email);
                             editor.commit();
 
                             lblMensaje.setText("Cuenta de correo validada correctamente");

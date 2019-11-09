@@ -65,7 +65,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     static String RUTA;
     private OnSwipeTouchListener onSwipeTouchListener;
     SharedPreferences sharedPreferences;
-    TextView lblTitulo,lblTitulo2,lblEncabezado;
+    TextView lblTitulo,lblTitulo2,lblEncabezado,lblFecha;
     WebView wvwDetalleCircular;
     String idCircular;
     String idUsuario,rsp;
@@ -101,6 +101,11 @@ public class CircularDetalleActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         lblTitulo = findViewById(R.id.lblTitulo);
         lblTitulo2 = findViewById(R.id.lblTitulo2);
+        lblFecha = findViewById(R.id.lblFecha);
+        lblTitulo.setTypeface(t);
+        lblTitulo2.setTypeface(t);
+        lblFecha.setTypeface(t);
+        lblFecha.setText(getIntent().getStringExtra("fechaCircular"));
         imgMoverFavSeleccionados = findViewById(R.id.imgMoverFavSeleccionados);
         imgEliminarSeleccionados = findViewById(R.id.imgEliminarSeleccionados);
         imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);
@@ -315,11 +320,16 @@ public class CircularDetalleActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(pos>0){
-                for(int i=0; i<circulares.size(); i++){
-                    if(circulares.get(i).getIdCircular()==idCircular)
-                        pos=i;
+
+                if(pos<=0){
+                    return;
                 }
+
+                if(pos>0){
+                    for(int i=0; i<circulares.size(); i++){
+                        if(circulares.get(i).getIdCircular()==idCircular)
+                            pos=i;
+                    }
 
                     pos = pos - 1;
                     idCircular = circulares.get(pos).getIdCircular();
@@ -330,7 +340,6 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     String tituloCompleto = circulares.get(pos).getNombre();
                     String[] titulo = tituloCompleto.split(" ");
                     int totalElementos = titulo.length;
-                    int totalEspacios = totalElementos-1;
                     if(totalElementos>2){
                         lblTitulo.setText(titulo[0]+" "+titulo[1]);
                         String t="";
@@ -347,10 +356,10 @@ public class CircularDetalleActivity extends AppCompatActivity {
                         lblTitulo.setText(tituloCompleto);
                     }
 
-
                 }else {
                     pos = circulares.size() - 1;
                 }
+
             }
         });
 
@@ -360,22 +369,57 @@ public class CircularDetalleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //obtener la posición del id
 
-                if(pos<circulares.size()){
-               for(int i=0; i<circulares.size(); i++){
-                   if(circulares.get(i).getIdCircular()==idCircular)
-                       pos=i;
+               try{
+                   if(pos<circulares.size()){
+                       for(int i=0; i<circulares.size(); i++){
+                           if(circulares.get(i).getIdCircular()==idCircular)
+                               pos=i;
+                       }
+
+                       //despues de obtenerla pasar a la siguiente circular
+                       pos = pos+1;
+                       idCircular = circulares.get(pos).getIdCircular();
+                       new RegistrarLecturaAsyncTask(idCircular,"5").execute();
+                       wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
+                       //lblTitulo.setText(circulares.get(pos).getNombre());
+
+
+                       String tituloCompleto = circulares.get(pos).getNombre();
+                       String[] titulo = tituloCompleto.split(" ");
+                       int totalElementos = titulo.length;
+                       int totalEspacios = totalElementos-1;
+                       if(totalElementos>2){
+                           lblTitulo.setText(titulo[0]+" "+titulo[1]);
+                           String t="";
+                           //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
+                           for(int i=2; i<totalElementos; i++){
+                               t += titulo[i]+" ";
+
+                           }
+                           lblTitulo2.setVisibility(View.VISIBLE);
+
+                           lblTitulo2.setText(t);
+                       }else{
+                           lblTitulo2.setVisibility(View.INVISIBLE);
+                           lblTitulo.setText(tituloCompleto);
+                       }
+
+
+                   }else{
+                       pos=0;
+                   }
+
+
+
+               }catch (Exception ex){
+
                }
 
-               //despues de obtenerla pasar a la siguiente circular
-                pos = pos+1;
-                idCircular = circulares.get(pos).getIdCircular();
-                new RegistrarLecturaAsyncTask(idCircular,"5").execute();
-                wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
-                lblTitulo.setText(circulares.get(pos).getNombre());
-                }else{
-                    pos=0;
-                }
+
+
+
             }
+
         });
 
 

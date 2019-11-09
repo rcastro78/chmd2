@@ -102,6 +102,16 @@ ImageButton fabLogin;
         }
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*if(valida==-1){
+            Toast.makeText(getApplicationContext(),"Cerraste sesión",Toast.LENGTH_LONG).show();
+            mGoogleSignInClient.signOut();
+        }*/
+    }
+
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -129,7 +139,7 @@ ImageButton fabLogin;
         if (result.isSuccess()) {
             GoogleSignInAccount account = result.getSignInAccount();
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("email",account.getEmail());
+            editor.putString("correoRegistrado",account.getEmail());
             editor.putString("nombre",account.getDisplayName());
             String userPic = "";
             //Al venir la pic vacía daba error, se cerraba luego de escoger la cuenta.

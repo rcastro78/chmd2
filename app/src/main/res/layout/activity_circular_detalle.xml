@@ -135,13 +135,68 @@
 
         </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="10"
+        android:weightSum="100">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="90"
+            android:weightSum="100"
+            android:orientation="horizontal"
+            android:background="@null">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="50">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/logo2"
+                    android:padding="8dp"
+                    ></ImageView>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="50">
+
+
+                <TextView
+                    android:id="@+id/lblFecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="00/00/2019"
+                    android:padding="4dp"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="50"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/textoMasOscuro"
+                    android:textSize="24dp" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="10"
             android:weightSum="100">
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,12 +209,12 @@
 
             <TextView
                 android:id="@+id/lblTitulo"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Titulo"
                 android:padding="4dp"
-                android:background="@color/textoClaro"
+                android:background="#91CAEE"
                 android:gravity="center_horizontal"
                 android:layout_weight="50"
                 android:layout_gravity="center_horizontal"
@@ -170,18 +225,18 @@
 
                 <TextView
                     android:id="@+id/lblTitulo2"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="Titulo"
-                    android:background="@color/textoOscuro"
+                    android:background="#098FCF"
                     android:gravity="center_horizontal"
                     android:padding="4dp"
                     android:layout_weight="50"
                     android:layout_gravity="center_horizontal"
                     android:layout_below="@+id/lblTitulo"
                     android:layout_centerHorizontal="true"
-                    android:textColor="@color/textoMasOscuro"
+                    android:textColor="@color/textoOscuro"
                     android:visibility="invisible"
                     android:textSize="16dp" />
 
@@ -191,12 +246,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/searchBar"
+
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="15"></WebView>
 
         </LinearLayout>
 
 
-
+</LinearLayout>
 
     </LinearLayout>
 

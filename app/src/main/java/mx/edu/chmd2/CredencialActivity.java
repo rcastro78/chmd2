@@ -19,6 +19,11 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
@@ -31,6 +36,16 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
     SharedPreferences sharedPreferences;
     String fotoPadre="";
     int idUsuario=0;
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(CredencialActivity.this, PrincipalActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +67,8 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         TextView lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
         lblEncabezado.setText("Credencial de padre");
         Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedMedium_21022.ttf");
+        Typeface tf1 = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedBold_21016.ttf");
+        lblEncabezado.setTypeface(tf1);
         lblNombrePadre = findViewById(R.id.lblNombrePadre);
         lblPadre = findViewById(R.id.lblPadre);
         lblNumFam = findViewById(R.id.lblNumFam);
@@ -60,9 +77,9 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-        lblNombrePadre.setText(sharedPreferences.getString("nombreCredencial",""));
-        lblNumFam.setText("Número de familia: "+sharedPreferences.getString("numeroCredencial",""));
-        lblPadre.setText(sharedPreferences.getString("responsableCredencial",""));
+        lblNombrePadre.setText(sharedPreferences.getString("nombreCredencial","S/N"));
+        lblNumFam.setText("Número de familia: "+sharedPreferences.getString("numeroCredencial","0"));
+        lblPadre.setText(sharedPreferences.getString("responsableCredencial","N/A"));
 
         lblNombrePadre.setTypeface(tf);
         lblPadre.setTypeface(tf);
@@ -82,21 +99,40 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
             }
 
         }else{
-            Glide.with(this)
-                    .load(BASE_URL+fotoUrl)
-                    .into(imgFotoPadre);
 
-            try{
-                Bitmap bmp = crearQR(BASE_URL_FOTO+fotoUrl);
-                imgQR.setImageBitmap(bmp);
-            }catch(Exception ex){
+            //revisar que el response de la URL no sea 40x
+            int response = getResponseCode(BASE_URL_FOTO+fotoUrl);
+
+            if(response<400){
+                Glide.with(this)
+                        .load(BASE_URL_FOTO+fotoUrl)
+                        .into(imgFotoPadre);
+
+                try{
+                    Bitmap bmp = crearQR(BASE_URL_FOTO+fotoUrl);
+                    imgQR.setImageBitmap(bmp);
+                }catch(Exception ex){
+                }
+            }else{
+                //La foto no existe, aunque el campo fotografía tenga un valor.
+                fotoUrl = "http://chmd.chmd.edu.mx:65083/CREDENCIALES/padres/sinfoto.png";
+                Glide.with(this)
+                        .load(fotoUrl)
+                        .into(imgFotoPadre);
+
+                try{
+                    Bitmap bmp = crearQR(fotoUrl);
+                    imgQR.setImageBitmap(bmp);
+                }catch(Exception ex){
+                }
             }
+
 
         }
 
 
         //Cargar la foto del padre
-
+        Toast.makeText(getApplicationContext(),fotoUrl,Toast.LENGTH_LONG).show();
 
         //generar QR a partir de la URL
 
@@ -137,6 +173,20 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, 200, 0, 0, w, h);
         return bitmap;
+    }
+
+
+    public static int getResponseCode(String urlString){
+        try{
+            URL u = new URL(urlString);
+            HttpURLConnection huc =  (HttpURLConnection)  u.openConnection();
+            huc.setRequestMethod("GET");
+            huc.connect();
+            return huc.getResponseCode();
+        }catch (Exception ex){
+            return -1;
+        }
+
     }
 
 }

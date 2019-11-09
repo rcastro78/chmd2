@@ -70,18 +70,19 @@ public class TodasCircularesFragment extends Fragment {
 public ListView lstCirculares;
 public ArrayList<Circular> circulares = new ArrayList<>();
 public CircularesAdapter adapter = null;
-    ArrayList<String> seleccionados = new ArrayList<String>();
+ ArrayList<String> seleccionados = new ArrayList<String>();
       private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     static String METODO="getCirculares.php";
     static String METODO_REG="leerCircular.php";
     static String METODO_DEL="eliminarCircular.php";
     static String METODO_FAV="favCircular.php";
+    ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados;
     static String BASE_URL;
     static String RUTA;
     String rsp;
     SharedPreferences sharedPreferences;
-    ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados;
+
     boolean todos=false;
     int idUsuario=5;
     @Override
@@ -97,7 +98,8 @@ public CircularesAdapter adapter = null;
         if(hayConexion())
             getCirculares(idUsuario);
         else
-            leeCirculares(idUsuario);
+            //leeCirculares(idUsuario);
+            Toast.makeText(getActivity().getApplicationContext(),"No hay conexión a Internet",Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -219,6 +221,7 @@ public CircularesAdapter adapter = null;
                 Intent intent = new Intent(getActivity(), CircularDetalleActivity.class);
                 intent.putExtra("idCircular",idCircular);
                 intent.putExtra("tituloCircular",circular.getNombre());
+                intent.putExtra("fechaCircular",circular.getFecha2());
                 getActivity().startActivity(intent);
 
             }
@@ -405,6 +408,8 @@ public CircularesAdapter adapter = null;
         return netInfo != null && netInfo.isConnectedOrConnecting();
 
     }
+
+
 
 
 

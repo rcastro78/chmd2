@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
@@ -43,6 +44,15 @@ WebView webView;
     private static String OAUTH_SCOPE = "email%20profile";
     private static String CLIENT_SECRET = "aegzGWfkW19XGfIArXxM22qE";
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(WebCHMDActivity.this, PrincipalActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +61,8 @@ WebView webView;
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         lblTextToolbar = toolbar.findViewById(R.id.lblTextoToolbar);
         lblTextToolbar.setText("CHMD - Web");
+        Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedBold_21016.ttf");
+        lblTextToolbar.setTypeface(tf);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
