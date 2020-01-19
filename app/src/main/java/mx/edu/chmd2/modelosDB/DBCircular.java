@@ -19,8 +19,8 @@ public class DBCircular extends Model {
     public int leida;
     @Column(name="favorita")
     public int favorita;
-    @Column(name="compartida")
-    public int compartida;
+    @Column(name="contenido")
+    public String contenido;
     @Column(name="eliminada")
     public int eliminada;
     @Column(name="idUsuario")

@@ -1,8 +1,11 @@
 package mx.edu.chmd2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.android.volley.Response;
@@ -35,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import mx.edu.chmd2.validaciones.ValidarPadreActivity;
 
 public class InicioActivity extends AppCompatActivity {
@@ -71,19 +75,25 @@ ImageButton fabLogin;
 
 
 
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestProfile()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        if(hayConexion()){
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .requestProfile()
+                    .build();
+            mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        fabLogin = findViewById(R.id.fabLogin);
-        fabLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn();
-            }
-        });
+            fabLogin = findViewById(R.id.fabLogin);
+            fabLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    signIn();
+                }
+            });
+        }else{
+            Intent i = new Intent(InicioActivity.this, ValidarPadreActivity.class);
+            startActivity(i);
+        }
+
     }
 
 
@@ -165,7 +175,14 @@ ImageButton fabLogin;
 
 
 
+    public boolean hayConexion() {
+        ConnectivityManager cm =
+                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
+    }
 
 
 

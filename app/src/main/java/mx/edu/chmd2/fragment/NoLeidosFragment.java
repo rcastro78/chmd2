@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -56,12 +57,13 @@ import mx.edu.chmd2.CircularDetalleActivity;
 import mx.edu.chmd2.R;
 import mx.edu.chmd2.adapter.CircularesAdapter;
 import mx.edu.chmd2.modelos.Circular;
+import mx.edu.chmd2.modelosDB.DBCircular;
 
 public class NoLeidosFragment extends Fragment {
     public ListView lstCirculares;
     ArrayList<Circular> circulares = new ArrayList<>();
     public CircularesAdapter adapter = null;
-    static String METODO="getCircularesNoLeidas.php";
+    static String METODO="getCircularesUsuarios.php";
     static String BASE_URL;
     static String RUTA;
     static String METODO_REG="leerCircular.php";
@@ -91,10 +93,17 @@ public class NoLeidosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(hayConexion())
-        getCirculares(5);
-        else
+        if(hayConexion()){
+            String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+            int idUsuario = Integer.parseInt(idUsuarioCredencial);
+            getCirculares(idUsuario);
+        }
+        else{
             Toast.makeText(getActivity().getApplicationContext(),"No hay conexión a Internet",Toast.LENGTH_LONG).show();
+            String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+            int idUsuario = Integer.parseInt(idUsuarioCredencial);
+            leeCirculares(idUsuario);
+        }
     }
 
     @Override
@@ -102,7 +111,8 @@ public class NoLeidosFragment extends Fragment {
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getActivity().getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-
+        final String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        final int idUsuario = Integer.parseInt(idUsuarioCredencial);
         View v = inflater.inflate(R.layout.fragment_circulares, container, false);
         lstCirculares = v.findViewById(R.id.lstCirculares);
         imgMoverFavSeleccionados = v.findViewById(R.id.imgMoverFavSeleccionados);
@@ -112,7 +122,7 @@ public class NoLeidosFragment extends Fragment {
         imgMoverFavSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(hayConexion()){
                 seleccionados = adapter.getSeleccionados();
                 if(seleccionados.size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -124,7 +134,7 @@ public class NoLeidosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new FavAsyncTask(c.getIdCircular(),"5").execute();
+                                new FavAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -136,7 +146,7 @@ public class NoLeidosFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
                 }
-
+            }
             }
         });
 
@@ -145,6 +155,7 @@ public class NoLeidosFragment extends Fragment {
         imgMoverLeidos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(hayConexion()){
                 seleccionados = adapter.getSeleccionados();
                 if(seleccionados.size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -156,7 +167,7 @@ public class NoLeidosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new RegistrarLecturaAsyncTask(c.getIdCircular(),"5").execute();
+                                new RegistrarLecturaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -168,13 +179,16 @@ public class NoLeidosFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
                 }
-
+            }else{
+                    Toast.makeText(getActivity().getApplicationContext(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
+            }
             }
         });
 
         imgEliminarSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(hayConexion()){
                 seleccionados = adapter.getSeleccionados();
                 if(seleccionados.size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -198,7 +212,9 @@ public class NoLeidosFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
                 }
-
+            }else{
+                    Toast.makeText(getActivity().getApplicationContext(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -215,6 +231,14 @@ public class NoLeidosFragment extends Fragment {
                 intent.putExtra("idCircular",idCircular);
                 intent.putExtra("tituloCircular",circular.getNombre());
                 intent.putExtra("fechaCircular",circular.getFecha2());
+                intent.putExtra("viaNotif",0);
+                intent.putExtra("temaIcs",circular.getTemaIcs());
+                intent.putExtra("fechaIcs",circular.getFechaIcs());
+                intent.putExtra("ubicaIcs",circular.getUbicacionIcs());
+                intent.putExtra("horaInicioIcs",circular.getHoraInicialIcs());
+                intent.putExtra("horaFinIcs",circular.getHoraFinalIcs());
+
+
                 getActivity().startActivity(intent);
 
             }
@@ -240,7 +264,44 @@ public class NoLeidosFragment extends Fragment {
         lstCirculares.setAdapter(adapter);
     }*/
 
+    public void leeCirculares(int idUsuario){
 
+        ArrayList<DBCircular> dbCirculares = new ArrayList<>();
+        List<DBCircular> list = new Select().from(DBCircular.class).where("idUsuario=? AND leida=0",idUsuario).execute();
+        dbCirculares.addAll(list);
+        //llenar el adapter
+        for(int i=0; i<dbCirculares.size(); i++){
+            String idCircular = dbCirculares.get(i).idCircular;
+            String nombre = dbCirculares.get(i).nombre;
+            String fecha1 =dbCirculares.get(i).created_at;
+            String fecha2 = dbCirculares.get(i).updated_at;
+
+
+            String estado = "0";
+            String favorito =  String.valueOf(dbCirculares.get(i).favorita);
+            String leido = String.valueOf(dbCirculares.get(i).leida);
+            String contenido = String.valueOf(dbCirculares.get(i).contenido);
+
+            //Toast.makeText(getActivity(),contenido,Toast.LENGTH_LONG).show();
+
+            circulares.add(new Circular(idCircular,
+                    "Circular No. "+idCircular,
+                    nombre,"",
+                    fecha1,
+                    fecha2,
+                    estado,
+                    Integer.parseInt(leido),
+                    Integer.parseInt(favorito),
+                    contenido));
+
+
+
+        } //fin del for
+        Toast.makeText(getActivity(),"Se muestran las circulares almacenadas en el dispositivo",Toast.LENGTH_LONG).show();
+        adapter = new CircularesAdapter(getActivity(),circulares);
+        lstCirculares.setAdapter(adapter);
+
+    }
 
 
     public void getCirculares(int usuario_id){
@@ -275,8 +336,22 @@ public class NoLeidosFragment extends Fragment {
                                 String estado = jsonObject.getString("estatus");
                                 String favorito = jsonObject.getString("favorito");
                                 String leido = jsonObject.getString("leido");
-                                String compartida = jsonObject.getString("compartida");
-                                circulares.add(new Circular(idCircular,"Circular No. "+idCircular,nombre,"",strFecha1,strFecha2,estado,Integer.parseInt(leido),Integer.parseInt(favorito),Integer.parseInt(compartida) ));
+                                String contenido = jsonObject.getString("contenido");
+
+                                String temaIcs = jsonObject.getString("tema_ics");
+                                String fechaIcs = jsonObject.getString("fecha_ics");
+                                String horaInicialIcs = jsonObject.getString("hora_inicial_ics");
+                                String horaFinalIcs = jsonObject.getString("hora_final_ics");
+                                String ubicacionIcs = jsonObject.getString("ubicacion_ics");
+
+
+                                if(Integer.parseInt(leido)==0)
+                                    circulares.add(new Circular(idCircular,"Circular No. "+idCircular,nombre,"",strFecha1,strFecha2,estado,Integer.parseInt(leido),Integer.parseInt(favorito),contenido,
+                                            temaIcs,
+                                            fechaIcs,
+                                            horaInicialIcs,
+                                            horaFinalIcs,
+                                            ubicacionIcs));
                                 //String idCircular, String encabezado, String nombre,
                                 //                    String textoCircular, String fecha1, String fecha2, String estado
 

@@ -77,6 +77,7 @@ public class CompartidosFragment extends Fragment {
                 String idCircular = circular.getIdCircular();
                 Intent intent = new Intent(getActivity(), CircularDetalleActivity.class);
                 intent.putExtra("idCircular",idCircular);
+                intent.putExtra("viaNotif",0);
                 intent.putExtra("tituloCircular",circular.getNombre());
                 getActivity().startActivity(intent);
 
@@ -138,8 +139,8 @@ public class CompartidosFragment extends Fragment {
                                 String estado = jsonObject.getString("estatus");
                                 String favorito = jsonObject.getString("favorito");
                                 String leido = jsonObject.getString("leido");
-                                String compartida = jsonObject.getString("compartida");
-                                circulares.add(new Circular(idCircular,"Circular No. "+idCircular,nombre,"",strFecha1,strFecha2,estado,Integer.parseInt(leido),Integer.parseInt(favorito),Integer.parseInt(compartida) ));
+                                String contenido = jsonObject.getString("contenido");
+                                circulares.add(new Circular(idCircular,"Circular No. "+idCircular,nombre,"",strFecha1,strFecha2,estado,Integer.parseInt(leido),Integer.parseInt(favorito),contenido));
                                 //String idCircular, String encabezado, String nombre,
                                 //                    String textoCircular, String fecha1, String fecha2, String estado
 

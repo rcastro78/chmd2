@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".AppCHMD"
@@ -16,13 +20,51 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CredencialActivity"></activity>
+        <activity android:name=".NotificacionesActivity"></activity>
+
+        <receiver
+            android:name=".receiver.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="com.google.android.gcm.demo.app" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".CredencialActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".CircularDetalleActivity" />
+        <activity android:name=".CircularDetalleActivity">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="chmd.edu.mx"
+                    android:scheme="http" />
+                <data
+                    android:host="chmd.edu.mx"
+                    android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*"
+                    android:scheme="yourscheme" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".CircularActivity"
             android:label="@string/title_activity_circular"
@@ -51,8 +93,16 @@
         </service>
 
         <meta-data
+            android:name="AA_DB_NAME"
+            android:value="chmd.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1" />
+
+
+        <meta-data
             android:name="AA_MODELS"
-            android:value="mx.edu.chmd2.modelosDB.DBCircular" />
+            android:value="mx.edu.chmd2.modelosDB.DBCircular,mx.edu.chmd2.modelosDB.DBNotificacion" />
 
         <provider
             android:name=".utilerias.CHMDDatabaseProvider"

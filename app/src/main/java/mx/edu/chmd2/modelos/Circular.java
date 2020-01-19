@@ -4,9 +4,12 @@ public class Circular {
     private String idCircular;
     private String encabezado,nombre,textoCircular;
     private String fecha1,fecha2;
-    private String estado;
+    private String estado,contenido;
     private int idCiclo,envio_todos;
     private int leida,favorita,compartida,eliminada;
+    //Calendarios
+    private String temaIcs,fechaIcs,horaInicialIcs,horaFinalIcs,ubicacionIcs;
+
     boolean selected;
     public Circular(String idCircular, String nombre, String fecha1, String fecha2, String estado,
                     int idCiclo, int envio_todos) {
@@ -43,7 +46,8 @@ public class Circular {
 
     public Circular(String idCircular, String encabezado, String nombre,
                     String textoCircular, String fecha1, String fecha2, String estado,
-                    int leida,int favorita,int compartida) {
+                    int leida,int favorita,String contenido,String temaIcs, String fechaIcs, String horaInicialIcs,
+                    String horaFinalIcs, String ubicacionIcs) {
         this.idCircular = idCircular;
         this.encabezado = encabezado;
         this.nombre = nombre;
@@ -53,13 +57,50 @@ public class Circular {
         this.estado = estado;
         this.leida = leida;
         this.favorita = favorita;
-        this.compartida = compartida;
-    }
+        this.contenido = contenido;
+        this.temaIcs = temaIcs;
+        this.horaFinalIcs = horaFinalIcs;
+        this.horaInicialIcs = horaInicialIcs;
+        this.ubicacionIcs = ubicacionIcs;
+        this.fechaIcs = fechaIcs;
 
+    }
+    public Circular(String idCircular, String encabezado, String nombre,
+                    String textoCircular, String fecha1, String fecha2, String estado,
+                    int leida,int favorita,String contenido) {
+        this.idCircular = idCircular;
+        this.encabezado = encabezado;
+        this.nombre = nombre;
+        this.textoCircular = textoCircular;
+        this.fecha1 = fecha1;
+        this.fecha2 = fecha2;
+        this.estado = estado;
+        this.leida = leida;
+        this.favorita = favorita;
+        this.contenido = contenido;
+
+    }
 
     public Circular(String idCircular, String encabezado, String nombre,
                     String textoCircular, String fecha1, String fecha2, String estado,
-                    int leida,int favorita,int compartida, int eliminada) {
+                    int leida,int favorita,String contenido, int eliminada) {
+        this.idCircular = idCircular;
+        this.encabezado = encabezado;
+        this.nombre = nombre;
+        this.textoCircular = textoCircular;
+        this.fecha1 = fecha1;
+        this.fecha2 = fecha2;
+        this.estado = estado;
+        this.leida = leida;
+        this.favorita = favorita;
+        this.contenido = contenido;
+        this.eliminada = eliminada;
+    }
+
+    public Circular(String idCircular, String encabezado, String nombre,
+                    String textoCircular, String fecha1, String fecha2, String estado,
+                    int leida,int favorita,int compartida, int eliminada,String temaIcs, String fechaIcs, String horaInicialIcs,
+                    String horaFinalIcs, String ubicacionIcs) {
         this.idCircular = idCircular;
         this.encabezado = encabezado;
         this.nombre = nombre;
@@ -71,8 +112,60 @@ public class Circular {
         this.favorita = favorita;
         this.compartida = compartida;
         this.eliminada = eliminada;
+        this.temaIcs = temaIcs;
+        this.horaFinalIcs = horaFinalIcs;
+        this.horaInicialIcs = horaInicialIcs;
+        this.ubicacionIcs = ubicacionIcs;
+        this.fechaIcs = fechaIcs;
     }
 
+    public String getTemaIcs() {
+        return temaIcs;
+    }
+
+    public void setTemaIcs(String temaIcs) {
+        this.temaIcs = temaIcs;
+    }
+
+    public String getFechaIcs() {
+        return fechaIcs;
+    }
+
+    public void setFechaIcs(String fechaIcs) {
+        this.fechaIcs = fechaIcs;
+    }
+
+    public String getHoraInicialIcs() {
+        return horaInicialIcs;
+    }
+
+    public void setHoraInicialIcs(String horaInicialIcs) {
+        this.horaInicialIcs = horaInicialIcs;
+    }
+
+    public String getHoraFinalIcs() {
+        return horaFinalIcs;
+    }
+
+    public void setHoraFinalIcs(String horaFinalIcs) {
+        this.horaFinalIcs = horaFinalIcs;
+    }
+
+    public String getUbicacionIcs() {
+        return ubicacionIcs;
+    }
+
+    public void setUbicacionIcs(String ubicacionIcs) {
+        this.ubicacionIcs = ubicacionIcs;
+    }
+
+    public String getContenido() {
+        return contenido;
+    }
+
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
+    }
 
     public int getEliminada() {
         return eliminada;

@@ -8,6 +8,11 @@ import com.activeandroid.Configuration;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.bitly.Bitly;
+import com.bitly.Error;
+import com.bitly.Response;
+
+import java.util.Arrays;
 
 public class AppCHMD extends Application {
 
@@ -23,6 +28,23 @@ public class AppCHMD extends Application {
         mInstance = this;
         Configuration dbConfiguration = new Configuration.Builder(this).setDatabaseName("chmd.db").create();
         ActiveAndroid.initialize(dbConfiguration);
+
+        Bitly.initialize(this, "e8bb7ba58c708d041c59b1ba04616b0668bdf53b", Arrays.asList("chmd.edu.mx","chmd.edu.mx"), Arrays.asList("yourscheme"), new Bitly.Callback() {
+            @Override
+            public void onResponse(Response response) {
+                // response provides a Response object which contains the full URL information
+                // response includes a status code
+                // Your custom logic goes here...
+            }
+
+            @Override
+            public void onError(Error error) {
+                // error provides any errors in retrieving information about the URL
+                // Your custom logic goes here...
+            }
+        });
+
+
     }
 
     public static synchronized AppCHMD getInstance() {

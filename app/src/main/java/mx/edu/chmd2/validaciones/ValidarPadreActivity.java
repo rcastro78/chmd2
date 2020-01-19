@@ -1,8 +1,11 @@
 package mx.edu.chmd2.validaciones;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,7 +43,18 @@ public class ValidarPadreActivity extends AppCompatActivity {
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         correo = sharedPreferences.getString("correoRegistrado","");
-        validarCuenta(correo);
+
+        if(hayConexion()){
+            validarCuenta(correo);
+        }else{
+            int cuentaValida = sharedPreferences.getInt("cuentaValida",0);
+            if(cuentaValida==1){
+                Intent i = new Intent(ValidarPadreActivity.this, PrincipalActivity.class);
+                startActivity(i);
+            }
+        }
+
+
     }
 
 
@@ -119,7 +133,14 @@ public class ValidarPadreActivity extends AppCompatActivity {
         AppCHMD.getInstance().addToRequestQueue(req);
     }
 
+    public boolean hayConexion() {
+        ConnectivityManager cm =
+                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
+    }
 }
 
 

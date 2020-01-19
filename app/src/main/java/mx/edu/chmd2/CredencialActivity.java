@@ -132,7 +132,6 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
 
 
         //Cargar la foto del padre
-        Toast.makeText(getApplicationContext(),fotoUrl,Toast.LENGTH_LONG).show();
 
         //generar QR a partir de la URL
 

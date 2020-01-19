@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import mx.edu.chmd2.adapter.MenuAdapter;
 import mx.edu.chmd2.modelos.Menu;
 import mx.edu.chmd2.modelos.Usuario;
@@ -62,7 +63,6 @@ public class PrincipalActivity extends AppCompatActivity {
     String correo,rsp;
     static String GET_USUARIO="getUsuarioEmail.php";
     static String METODO_REG="registrarDispositivo.php";
-    ArrayList<Usuario> usuario = new ArrayList<>();
     static String TAG=PrincipalActivity.class.getName();
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
@@ -89,11 +89,9 @@ public class PrincipalActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         correo = sharedPreferences.getString("correoRegistrado","");
-        //Para pruebas
         getUsuario(correo);
 
-        //
-        // getUsuario(correo);
+        ShortcutBadger.applyCount(getApplicationContext(), 0);
         FirebaseInstanceId.getInstance().getInstanceId() .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
@@ -109,7 +107,6 @@ public class PrincipalActivity extends AppCompatActivity {
 
 
         lstPrincipal = findViewById(R.id.lstPrincipal);
-
         llenarMenu();
         lstPrincipal.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -132,6 +129,11 @@ public class PrincipalActivity extends AppCompatActivity {
                 }
 
                 if(m.getIdMenu()==4){
+                    Intent intent = new Intent(PrincipalActivity.this,NotificacionesActivity.class);
+                    startActivity(intent);
+                }
+
+                if(m.getIdMenu()==5){
                     //Cerrar Sesión
                     try{
                         mGoogleSignInClient.signOut();
@@ -146,6 +148,7 @@ public class PrincipalActivity extends AppCompatActivity {
                         editor.commit();
                         Intent intent = new Intent(PrincipalActivity.this,InicioActivity.class);
                         startActivity(intent);
+                        finish();
                     }catch (Exception ex){
 
                     }
@@ -158,7 +161,8 @@ public class PrincipalActivity extends AppCompatActivity {
         items.add(new Menu(1,"Circulares",R.drawable.circulares2));
         items.add(new Menu(2,"Mi Maguen",R.drawable.maguen2));
         items.add(new Menu(3,"Mi Credencial",R.drawable.credencial2));
-        items.add(new Menu(4,"Cerrar Sesión",R.drawable.cerrar2));
+        items.add(new Menu(4,"Notificaciones",R.drawable.credencial));
+        items.add(new Menu(5,"Cerrar Sesión",R.drawable.cerrar2));
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);
     }
@@ -263,12 +267,12 @@ public class PrincipalActivity extends AppCompatActivity {
 
                         if(response.length()<=0){
                             SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("idUsuarioCredencial","");
-                            editor.putString("nombreCredencial","");
-                            editor.putString("numeroCredencial","");
-                            editor.putString("telefonoCredencial","");
-                            editor.putString("responsableCredencial","");
-                            editor.putString("familiaCredencial","");
+                            editor.putString("idUsuarioCredencial","0");
+                            editor.putString("nombreCredencial","S/N");
+                            editor.putString("numeroCredencial","0");
+                            editor.putString("telefonoCredencial","S/T");
+                            editor.putString("responsableCredencial","S/N");
+                            editor.putString("familiaCredencial","S/N");
                             editor.putString("fotoCredencial","");
                             //Toast.makeText(getApplicationContext(),foto,Toast.LENGTH_LONG).show();
                             editor.commit();
@@ -318,9 +322,7 @@ public class PrincipalActivity extends AppCompatActivity {
                         {
                             e.printStackTrace();
 
-                            Toast.makeText(getApplicationContext(),
-                                    "Error: "+e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
+
                         }
                         //TODO: Cambiarlo cuando pase a prueba en MX
                         // if (existe.equalsIgnoreCase("1")) {
@@ -347,9 +349,11 @@ public class PrincipalActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error)
             {
                 VolleyLog.d("ERROR", "Error: " + error.getMessage());
-
+                /*
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_SHORT).show();
+                        */
+
             }
         });
 

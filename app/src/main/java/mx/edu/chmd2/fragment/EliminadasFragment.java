@@ -1,8 +1,11 @@
 package mx.edu.chmd2.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 
+import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -52,6 +56,7 @@ import mx.edu.chmd2.CircularDetalleActivity;
 import mx.edu.chmd2.R;
 import mx.edu.chmd2.adapter.CircularesAdapter;
 import mx.edu.chmd2.modelos.Circular;
+import mx.edu.chmd2.modelosDB.DBCircular;
 
 public class EliminadasFragment extends Fragment {
     public ListView lstCirculares;
@@ -70,6 +75,15 @@ public class EliminadasFragment extends Fragment {
     static String RUTA;
     SharedPreferences sharedPreferences;
 
+    public boolean hayConexion() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -79,7 +93,12 @@ public class EliminadasFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getCirculares(5);
+        String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        int idUsuario = Integer.parseInt(idUsuarioCredencial);
+        if(hayConexion())
+            getCirculares(idUsuario);
+        else
+            leeCirculares(idUsuario);
     }
 
     @Override
@@ -97,7 +116,7 @@ public class EliminadasFragment extends Fragment {
         imgMoverFavSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            if(hayConexion()){
                 seleccionados = adapter.getSeleccionados();
                 if(seleccionados.size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -121,7 +140,9 @@ public class EliminadasFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
                 }
-
+            }else{
+                Toast.makeText(getActivity(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
+            }
             }
         });
 
@@ -130,6 +151,7 @@ public class EliminadasFragment extends Fragment {
         imgMoverLeidos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(hayConexion()){
                 seleccionados = adapter.getSeleccionados();
                 if(seleccionados.size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -153,13 +175,16 @@ public class EliminadasFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
                 }
-
+            }else{
+                    Toast.makeText(getActivity(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         imgEliminarSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(hayConexion()){
                 seleccionados = adapter.getSeleccionados();
                 if(seleccionados.size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -183,7 +208,9 @@ public class EliminadasFragment extends Fragment {
                 }else{
                     Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
                 }
-
+            }else{
+                    Toast.makeText(getActivity(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -198,6 +225,12 @@ public class EliminadasFragment extends Fragment {
                 intent.putExtra("idCircular",idCircular);
                 intent.putExtra("tituloCircular",circular.getNombre());
                 intent.putExtra("fechaCircular",circular.getFecha2());
+                intent.putExtra("temaIcs",circular.getTemaIcs());
+                intent.putExtra("fechaIcs",circular.getFechaIcs());
+                intent.putExtra("ubicaIcs",circular.getUbicacionIcs());
+                intent.putExtra("horaInicioIcs",circular.getHoraInicialIcs());
+                intent.putExtra("horaFinIcs",circular.getHoraFinalIcs());
+                intent.putExtra("viaNotif",0);
                 getActivity().startActivity(intent);
 
             }
@@ -224,7 +257,45 @@ public class EliminadasFragment extends Fragment {
     }*/
 
 
+    public void leeCirculares(int idUsuario){
 
+        ArrayList<DBCircular> dbCirculares = new ArrayList<>();
+        List<DBCircular> list = new Select().from(DBCircular.class).where("idUsuario=? AND eliminada=1",idUsuario).execute();
+        dbCirculares.addAll(list);
+        //llenar el adapter
+        for(int i=0; i<dbCirculares.size(); i++){
+            String idCircular = dbCirculares.get(i).idCircular;
+            String nombre = dbCirculares.get(i).nombre;
+            String fecha1 =dbCirculares.get(i).created_at;
+            String fecha2 = dbCirculares.get(i).updated_at;
+
+
+            String estado = "0";
+            String favorito =  String.valueOf(dbCirculares.get(i).favorita);
+            String leido = String.valueOf(dbCirculares.get(i).leida);
+            String contenido = String.valueOf(dbCirculares.get(i).contenido);
+            String eliminado = String.valueOf(dbCirculares.get(i).eliminada);
+            //Toast.makeText(getActivity(),contenido,Toast.LENGTH_LONG).show();
+
+            circulares.add(new Circular(idCircular,
+                    "Circular No. "+idCircular,
+                    nombre,"",
+                    fecha1,
+                    fecha2,
+                    estado,
+                    Integer.parseInt(leido),
+                    Integer.parseInt(favorito),
+                    contenido,
+                    Integer.parseInt(eliminado)));
+
+
+
+        } //fin del for
+        Toast.makeText(getActivity(),"Se muestran las circulares almacenadas en el dispositivo",Toast.LENGTH_LONG).show();
+        adapter = new CircularesAdapter(getActivity(),circulares);
+        lstCirculares.setAdapter(adapter);
+
+    }
 
     public void getCirculares(int usuario_id){
 
@@ -258,8 +329,13 @@ public class EliminadasFragment extends Fragment {
                                 String estado = jsonObject.getString("estatus");
                                 String favorito = jsonObject.getString("favorito");
                                 String leido = jsonObject.getString("leido");
-                                String compartida = jsonObject.getString("compartida");
+                                String compartida = "0";
                                 String eliminado = jsonObject.getString("eliminado");
+                                String temaIcs = jsonObject.getString("tema_ics");
+                                String fechaIcs = jsonObject.getString("fecha_ics");
+                                String horaInicialIcs = jsonObject.getString("hora_inicial_ics");
+                                String horaFinalIcs = jsonObject.getString("hora_final_ics");
+                                String ubicacionIcs = jsonObject.getString("ubicacion_ics");
 
                                 circulares.add(new Circular(idCircular,
                                         "Circular No. "+idCircular,
@@ -270,7 +346,12 @@ public class EliminadasFragment extends Fragment {
                                         Integer.parseInt(leido),
                                         Integer.parseInt(favorito),
                                         Integer.parseInt(compartida),
-                                        Integer.parseInt(eliminado)));
+                                        Integer.parseInt(eliminado),
+                                        temaIcs,
+                                        fechaIcs,
+                                        horaInicialIcs,
+                                        horaFinalIcs,
+                                        ubicacionIcs));
                                 //String idCircular, String encabezado, String nombre,
                                 //                    String textoCircular, String fecha1, String fecha2, String estado
 
