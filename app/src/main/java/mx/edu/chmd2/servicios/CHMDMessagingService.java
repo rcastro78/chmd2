@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -191,13 +192,16 @@ public class CHMDMessagingService extends FirebaseMessagingService {
 
         Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.appmenu05)//notification icon
+                .setSmallIcon(R.drawable.icono_notificaciones)//notification icon
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.drawable.icono_grande))
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(soundUri)
                 .setContentIntent(pendingIntent)
                 .setNumber(1)
+
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL);
 
 
