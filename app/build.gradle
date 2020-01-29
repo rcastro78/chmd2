@@ -3,7 +3,7 @@ apply plugin: 'io.fabric'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "mx.edu.chmd2"
+        applicationId "mx.edu.chmd1"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1

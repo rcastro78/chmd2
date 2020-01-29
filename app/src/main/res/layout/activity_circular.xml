@@ -28,7 +28,7 @@
             android:layout_height="42dp"
             android:background="@color/colorAccent"
             />
-        <mx.edu.chmd2.utilerias.CustomTabLayout
+        <mx.edu.chmd1.utilerias.CustomTabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -60,7 +60,7 @@
 
 
 
-        </mx.edu.chmd2.utilerias.CustomTabLayout>
+        </mx.edu.chmd1.utilerias.CustomTabLayout>
 
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="mx.edu.chmd2">
+    package="mx.edu.chmd1">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -40,7 +40,7 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".CircularDetalleActivity">
+        <activity android:name="mx.edu.chmd1.CircularDetalleActivity">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -102,11 +102,11 @@
 
         <meta-data
             android:name="AA_MODELS"
-            android:value="mx.edu.chmd2.modelosDB.DBCircular,mx.edu.chmd2.modelosDB.DBNotificacion" />
+            android:value="mx.edu.chmd1.modelosDB.DBCircular,mx.edu.chmd1.modelosDB.DBNotificacion" />
 
         <provider
-            android:name=".utilerias.CHMDDatabaseProvider"
-            android:authorities="mx.edu.chmd2"
+            android:name="mx.edu.chmd1.utilerias.CHMDDatabaseProvider"
+            android:authorities="mx.edu.chmd1"
             android:exported="false" />
     </application>
 
