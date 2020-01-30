@@ -63,6 +63,7 @@ public class PrincipalActivity extends AppCompatActivity {
     static String TAG=PrincipalActivity.class.getName();
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
+    String idUsuarioCredencial="0";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +87,8 @@ public class PrincipalActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         sharedPreferences = this.getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         correo = sharedPreferences.getString("correoRegistrado","");
-        getUsuario(correo);
+        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        //getUsuario(correo);
 
         ShortcutBadger.applyCount(getApplicationContext(), 0);
         FirebaseInstanceId.getInstance().getInstanceId() .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -97,7 +99,7 @@ public class PrincipalActivity extends AppCompatActivity {
                     return;
                 }
                 String token = task.getResult().getToken();
-                new RegistrarDispositivoAsyncTask(correo,token,"Android OS").execute();
+                new RegistrarDispositivoAsyncTask(correo,token,"Android OS",idUsuarioCredencial).execute();
             }
         });
 
@@ -173,12 +175,15 @@ public class PrincipalActivity extends AppCompatActivity {
         private String correo;
         private String device_token;
         private String plataforma;
+        private String idUsuarioCredencial;
 
 
-        public RegistrarDispositivoAsyncTask(String correo, String device_token, String plataforma) {
+        public RegistrarDispositivoAsyncTask(String correo, String device_token, String plataforma,
+                                             String idUsuarioCredencial) {
             this.correo = correo;
             this.device_token = device_token;
             this.plataforma = plataforma;
+            this.idUsuarioCredencial = idUsuarioCredencial;
         }
 
         @Override
@@ -193,10 +198,11 @@ public class PrincipalActivity extends AppCompatActivity {
             httpClient = new DefaultHttpClient();
             httppost = new HttpPost(BASE_URL+RUTA+METODO_REG);
             try {
-                List<NameValuePair> nameValuePairs = new ArrayList<>(3);
+                List<NameValuePair> nameValuePairs = new ArrayList<>(4);
                 nameValuePairs.add(new BasicNameValuePair("correo",correo));
                 nameValuePairs.add(new BasicNameValuePair("device_token",device_token));
                 nameValuePairs.add(new BasicNameValuePair("plataforma",plataforma));
+                nameValuePairs.add(new BasicNameValuePair("id_usuario",idUsuarioCredencial));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpClient.execute(httppost);
                 int responseCode = response.getStatusLine().getStatusCode();

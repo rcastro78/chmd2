@@ -8,6 +8,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 
@@ -24,6 +28,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import mx.edu.chmd1.validaciones.ValidarPadreActivity;
 
 public class InicioActivity extends AppCompatActivity {
@@ -37,7 +45,7 @@ ImageButton fabLogin;
     int valida;
     static String BASE_URL;
     static String RUTA;
-
+    static String GET_USUARIO="getUsuarioEmail.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +141,7 @@ ImageButton fabLogin;
 
         if (result.isSuccess()) {
             GoogleSignInAccount account = result.getSignInAccount();
+            getUsuario(account.getEmail());
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("correoRegistrado",account.getEmail());
             editor.putString("nombre",account.getDisplayName());
@@ -172,6 +181,126 @@ ImageButton fabLogin;
     }
 
 
+
+    public void getUsuario(String email){
+
+
+        JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+GET_USUARIO+"?correo="+email,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        /*
+                         * [{"id":"1","nombre":"SITT COHEN RAUL","numero":"0244","telefono":"52-51-91-34",
+                         * "correo":"raul@gconcreta.com","calle":"Ahuehuetes Nte. 1333- T. Vendome 304",
+                         * "colonia":"Bosques De Las Lomas","cp":"11700","ent":"CUDAD DE MEXICO","familia":"SITT SASSON",
+                         * "estatus":"2","fecha":"2019-08-22 16:36:03","tipo":"3","correo2":"raul@gconcreta.com",
+                         * "fotografia":"C:\\IDCARDDESIGN\\CREDENCIALES\\padres\\rosa maya.JPG","celular":"04455-51002067","token":"",
+                         * "vigencia":"1","responsable":"PADRE","ntarjeton1":"0","ntarjeton2":"0","perfil_admin":"0"}]
+                         * */
+
+
+/*
+* String idUsuario, String nombre, String numero,
+                   String telefono, String correo, String familia
+* */
+                        //Toast.makeText(getApplicationContext(),""+response.length(),Toast.LENGTH_LONG).show();
+
+                        if(response.length()<=0){
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("idUsuarioCredencial","0");
+                            editor.putString("nombreCredencial","S/N");
+                            editor.putString("numeroCredencial","0");
+                            editor.putString("telefonoCredencial","S/T");
+                            editor.putString("responsableCredencial","S/N");
+                            editor.putString("familiaCredencial","S/N");
+                            editor.putString("fotoCredencial","");
+                            //Toast.makeText(getApplicationContext(),foto,Toast.LENGTH_LONG).show();
+                            editor.commit();
+                        }
+
+                        try {
+                            for(int i=0; i<response.length(); i++){
+                                JSONObject jsonObject = (JSONObject) response
+                                        .get(i);
+                                String idUsuario = jsonObject.getString("id");
+                                String nombre = jsonObject.getString("nombre");
+                                String numero = jsonObject.getString("numero");
+                                String telefono = jsonObject.getString("telefono");
+                                String responsable = jsonObject.getString("responsable");
+                                String familia = jsonObject.getString("familia");
+                                String rutaFoto = jsonObject.getString("fotografia");
+                                Log.d("PrincipalActivity",rutaFoto);
+                                String[] ruta;
+                                String foto;
+                                try{
+                                    ruta  = rutaFoto.split("\\\\");
+                                    foto = ruta[4];
+                                }catch (Exception ex){
+                                    foto="";
+                                }
+
+
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("idUsuarioCredencial",idUsuario);
+                                editor.putString("nombreCredencial",nombre);
+                                editor.putString("numeroCredencial",numero);
+                                editor.putString("telefonoCredencial",telefono);
+                                editor.putString("responsableCredencial",responsable);
+                                editor.putString("familiaCredencial",familia);
+                                editor.putString("fotoCredencial",foto);
+                                //Toast.makeText(getApplicationContext(),foto,Toast.LENGTH_LONG).show();
+                                editor.commit();
+
+
+                            }
+
+
+
+
+
+                        }catch (JSONException e)
+                        {
+                            e.printStackTrace();
+
+
+                        }
+                        //TODO: Cambiarlo cuando pase a prueba en MX
+                        // if (existe.equalsIgnoreCase("1")) {
+                        //llenado de datos
+                        //eliminar circulares y guardar las primeras 10 del registro
+                        //Borra toda la tabla
+                        /*new Delete().from(DBCircular.class).execute();
+
+                        for(int i=0; i<10; i++){
+                            DBCircular dbCircular = new DBCircular();
+                            dbCircular.idCircular = circulares.get(i).getIdCircular();
+                            dbCircular.estado = circulares.get(i).getEstado();
+                            dbCircular.nombre = circulares.get(i).getNombre();
+                            dbCircular.textoCircular = circulares.get(i).getTextoCircular();
+                            dbCircular.save();
+                        }*/
+
+
+
+                    }
+                }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                VolleyLog.d("ERROR", "Error: " + error.getMessage());
+                /*
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                        */
+
+            }
+        });
+
+        // Adding request to request queue
+        AppCHMD.getInstance().addToRequestQueue(req);
+    }
 
 
 
