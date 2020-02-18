@@ -1,8 +1,11 @@
 package mx.edu.chmd1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.android.volley.Response;
@@ -64,6 +68,17 @@ public class PrincipalActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
     String idUsuarioCredencial="0";
+
+    public boolean hayConexion() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,13 +141,13 @@ public class PrincipalActivity extends AppCompatActivity {
                     Intent intent = new Intent(PrincipalActivity.this,CredencialActivity.class);
                     startActivity(intent);
                 }
-
+/*
                 if(m.getIdMenu()==4){
                     Intent intent = new Intent(PrincipalActivity.this,NotificacionesActivity.class);
                     startActivity(intent);
                 }
-
-                if(m.getIdMenu()==5){
+*/
+                if(m.getIdMenu()==4){
                     //Cerrar Sesión
                     try{
                         mGoogleSignInClient.signOut();
@@ -160,7 +175,7 @@ public class PrincipalActivity extends AppCompatActivity {
         items.add(new Menu(1,"Circulares",R.drawable.circulares2));
         items.add(new Menu(2,"Mi Maguen",R.drawable.maguen2));
         items.add(new Menu(3,"Mi Credencial",R.drawable.credencial2));
-        items.add(new Menu(4,"Notificaciones",R.drawable.credencial));
+        //items.add(new Menu(4,"Notificaciones",R.drawable.notificaciones));
         items.add(new Menu(5,"Cerrar Sesión",R.drawable.cerrar2));
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);

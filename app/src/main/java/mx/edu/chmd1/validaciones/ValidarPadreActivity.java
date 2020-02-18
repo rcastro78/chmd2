@@ -81,8 +81,8 @@ public class ValidarPadreActivity extends AppCompatActivity {
                                     Toast.LENGTH_LONG).show();
                         }
                         //TODO: Cambiarlo a 0 para pruebas
-                        // if (existe.equalsIgnoreCase("1")) {
-                        if (existe.equalsIgnoreCase("1") || existe.equalsIgnoreCase("0")) {
+                        if (existe.equalsIgnoreCase("1")) {
+                        //if (existe.equalsIgnoreCase("1") || existe.equalsIgnoreCase("0")) {
 
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putInt("cuentaValida",1);

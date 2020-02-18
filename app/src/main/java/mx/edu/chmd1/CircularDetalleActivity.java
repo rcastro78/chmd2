@@ -105,7 +105,8 @@ public class CircularDetalleActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Bitly.initialize(this, "9bd1d4e87ce38e38044ff0c7c60c07c90483e2a4");
+        if(hayConexion())
+            Bitly.initialize(this, "9bd1d4e87ce38e38044ff0c7c60c07c90483e2a4");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,8 +150,8 @@ public class CircularDetalleActivity extends AppCompatActivity {
         try{
             idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
             idUsuario = idUsuarioCredencial;
-            /*contenidoCircular = getIntent().getStringExtra("contenidoCircular");
-            temaIcs = getIntent().getStringExtra("temaIcs");
+            contenidoCircular = getIntent().getStringExtra("contenidoCircular");
+            /*temaIcs = getIntent().getStringExtra("temaIcs");
             fechaIcs = getIntent().getStringExtra("fechaIcs");
             ubicacionIcs = getIntent().getStringExtra("ubicaIcs");
             horaInicioIcs = getIntent().getStringExtra("horaInicioIcs");
