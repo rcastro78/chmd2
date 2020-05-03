@@ -322,8 +322,8 @@ public class NoLeidosFragment extends Fragment {
                                         .get(i);
                                 String idCircular = jsonObject.getString("id");
                                 String nombre = jsonObject.getString("titulo");
-                                String fecha1 = jsonObject.getString("created_at");
-                                String fecha2 = jsonObject.getString("updated_at");
+                                String fecha1 = jsonObject.getString("fecha");
+                                String fecha2 = jsonObject.getString("fecha");
                                 Date date1=new Date(),date2=new Date();
                                 try{
                                     date1 = formatoInicio.parse(fecha1);
@@ -343,15 +343,22 @@ public class NoLeidosFragment extends Fragment {
                                 String horaInicialIcs = jsonObject.getString("hora_inicial_ics");
                                 String horaFinalIcs = jsonObject.getString("hora_final_ics");
                                 String ubicacionIcs = jsonObject.getString("ubicacion_ics");
-
-
+                                String adjunto = jsonObject.getString("adjunto");
+                                String nivel = "";
+                                try{
+                                    nivel=jsonObject.getString("nivel");
+                                }catch (Exception ex){
+                                    nivel="";
+                                }
                                 if(Integer.parseInt(leido)==0)
                                     circulares.add(new Circular(idCircular,"Circular No. "+idCircular,nombre,"",strFecha1,strFecha2,estado,Integer.parseInt(leido),Integer.parseInt(favorito),contenido,
                                             temaIcs,
                                             fechaIcs,
                                             horaInicialIcs,
                                             horaFinalIcs,
-                                            ubicacionIcs));
+                                            ubicacionIcs,
+                                            Integer.parseInt(adjunto),
+                                            nivel));
                                 //String idCircular, String encabezado, String nombre,
                                 //                    String textoCircular, String fecha1, String fecha2, String estado
 

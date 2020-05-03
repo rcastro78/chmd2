@@ -2,11 +2,11 @@ package mx.edu.chmd1.modelos;
 
 public class Circular {
     private String idCircular;
-    private String encabezado,nombre,textoCircular;
+    private String encabezado,nombre,textoCircular,nivel;
     private String fecha1,fecha2;
     private String estado,contenido;
     private int idCiclo,envio_todos;
-    private int leida,favorita,compartida,eliminada;
+    private int leida,favorita,compartida,eliminada,adjunto;
     //Calendarios
     private String temaIcs,fechaIcs,horaInicialIcs,horaFinalIcs,ubicacionIcs;
 
@@ -34,6 +34,8 @@ public class Circular {
         this.eliminada = eliminada;
     }
 
+
+
     //Esto es para el detalle
     public Circular(String idCircular, String nombre) {
         this.idCircular = idCircular;
@@ -47,7 +49,7 @@ public class Circular {
     public Circular(String idCircular, String encabezado, String nombre,
                     String textoCircular, String fecha1, String fecha2, String estado,
                     int leida,int favorita,String contenido,String temaIcs, String fechaIcs, String horaInicialIcs,
-                    String horaFinalIcs, String ubicacionIcs) {
+                    String horaFinalIcs, String ubicacionIcs, int adjunto, String nivel) {
         this.idCircular = idCircular;
         this.encabezado = encabezado;
         this.nombre = nombre;
@@ -63,6 +65,8 @@ public class Circular {
         this.horaInicialIcs = horaInicialIcs;
         this.ubicacionIcs = ubicacionIcs;
         this.fechaIcs = fechaIcs;
+        this.adjunto = adjunto;
+        this.nivel = nivel;
 
     }
     public Circular(String idCircular, String encabezado, String nombre,
@@ -97,26 +101,21 @@ public class Circular {
         this.eliminada = eliminada;
     }
 
-    public Circular(String idCircular, String encabezado, String nombre,
-                    String textoCircular, String fecha1, String fecha2, String estado,
-                    int leida,int favorita,int compartida, int eliminada,String temaIcs, String fechaIcs, String horaInicialIcs,
-                    String horaFinalIcs, String ubicacionIcs) {
-        this.idCircular = idCircular;
-        this.encabezado = encabezado;
-        this.nombre = nombre;
-        this.textoCircular = textoCircular;
-        this.fecha1 = fecha1;
-        this.fecha2 = fecha2;
-        this.estado = estado;
-        this.leida = leida;
-        this.favorita = favorita;
-        this.compartida = compartida;
-        this.eliminada = eliminada;
-        this.temaIcs = temaIcs;
-        this.horaFinalIcs = horaFinalIcs;
-        this.horaInicialIcs = horaInicialIcs;
-        this.ubicacionIcs = ubicacionIcs;
-        this.fechaIcs = fechaIcs;
+
+    public String getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(String nivel) {
+        this.nivel = nivel;
+    }
+
+    public int getAdjunto() {
+        return adjunto;
+    }
+
+    public void setAdjunto(int adjunto) {
+        this.adjunto = adjunto;
     }
 
     public String getTemaIcs() {

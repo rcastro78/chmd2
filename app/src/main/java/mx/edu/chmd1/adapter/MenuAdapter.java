@@ -53,17 +53,17 @@ public class MenuAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.celda_menu, null);
             holder = new ViewHolder();
-            holder.lblNomMenu = convertView.findViewById(R.id.lblNomMenu);
+            //holder.lblNomMenu = convertView.findViewById(R.id.lblNomMenu);
             holder.imgMenu = convertView.findViewById(R.id.imgMenu);
             Typeface tf1 = Typeface.createFromAsset(activity.getAssets(),"fonts/GothamRoundedBold_21016.ttf");
-            holder.lblNomMenu.setTypeface(tf1);
+            //holder.lblNomMenu.setTypeface(tf1);
 
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lblNomMenu.setText(m.getNombreMenu());
+        //holder.lblNomMenu.setText(m.getNombreMenu());
         holder.imgMenu.setImageResource(m.getIdImagen());
 
 
@@ -71,7 +71,7 @@ public class MenuAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lblNomMenu;
+        //TextView lblNomMenu;
         ImageView imgMenu;
 
 

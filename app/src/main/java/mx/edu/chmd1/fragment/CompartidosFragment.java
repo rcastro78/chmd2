@@ -125,8 +125,8 @@ public class CompartidosFragment extends Fragment {
                                         .get(i);
                                 String idCircular = jsonObject.getString("id");
                                 String nombre = jsonObject.getString("titulo");
-                                String fecha1 = jsonObject.getString("created_at");
-                                String fecha2 = jsonObject.getString("updated_at");
+                                String fecha1 = jsonObject.getString("fecha");
+                                String fecha2 = jsonObject.getString("fecha");
                                 Date date1=new Date(),date2=new Date();
                                 try{
                                     date1 = formatoInicio.parse(fecha1);

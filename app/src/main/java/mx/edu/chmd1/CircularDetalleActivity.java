@@ -76,12 +76,12 @@ public class CircularDetalleActivity extends AppCompatActivity {
     static String RUTA;
     private OnSwipeTouchListener onSwipeTouchListener;
     SharedPreferences sharedPreferences;
-    TextView lblTitulo,lblTitulo2,lblEncabezado,lblFecha;
+    TextView lblTitulo,lblTitulo2,lblEncabezado,lblFecha,lblNivel;
     WebView wvwDetalleCircular;
     String idCircular,contenidoCircular;
     String idUsuario,rsp;
     String temaIcs,fechaIcs,ubicacionIcs,horaInicioIcs,horaFinIcs;
-    ImageView imgEliminarSeleccionados,imgMoverFavSeleccionados,imgMoverNoLeidos,imgCompartir,imgCalendario;
+    ImageView imgHome,imgEliminarSeleccionados,imgMoverFavSeleccionados;
     ImageView btnSiguiente,btnAnterior;
     Typeface t;
     String t2;
@@ -119,6 +119,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
         lblEncabezado.setText("Circular");
         lblEncabezado.setTypeface(t);
+
         wvwDetalleCircular = findViewById(R.id.wvwDetalleCircular);
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
@@ -127,15 +128,34 @@ public class CircularDetalleActivity extends AppCompatActivity {
         lblTitulo = findViewById(R.id.lblTitulo);
         lblTitulo2 = findViewById(R.id.lblTitulo2);
         lblFecha = findViewById(R.id.lblFecha);
+        lblNivel = findViewById(R.id.lblNivel);
         lblTitulo.setTypeface(t);
         lblTitulo2.setTypeface(t);
         lblFecha.setTypeface(t);
-        lblFecha.setText(getIntent().getStringExtra("fechaCircular"));
-        imgMoverFavSeleccionados = findViewById(R.id.imgMoverFavSeleccionados);
+        lblNivel.setTypeface(t);
+
+
+        final SimpleDateFormat formatoInicio = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatoDestino = new SimpleDateFormat("dd 'de' MMM 'de' yyyy");
+        try{
+            Date date1 = formatoInicio.parse(getIntent().getStringExtra("fechaCircular"));
+            String strFecha = formatoDestino.format(date1);
+            lblFecha.setText(strFecha);
+        }catch (Exception ex){
+
+        }
+        
+
+
+
+        if(!getIntent().getStringExtra("nivel").equalsIgnoreCase("null"))
+            lblNivel.setText(getIntent().getStringExtra("nivel"));
+
+        imgMoverFavSeleccionados = findViewById(R.id.imgMovFav);
         imgEliminarSeleccionados = findViewById(R.id.imgEliminarSeleccionados);
-        imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);
-        imgCalendario = findViewById(R.id.imgCalendario);
-        imgCompartir = findViewById(R.id.imgMoverComp);
+        //imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);
+        //imgCalendario = findViewById(R.id.imgCalendario);
+        imgHome = findViewById(R.id.imgHome);
         btnSiguiente = findViewById(R.id.btnSiguiente);
         btnAnterior = findViewById(R.id.btnAnterior);
         String idUsuarioCredencial="";
@@ -168,7 +188,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         else
             leeCirculares(Integer.parseInt(idUsuarioCredencial));
 
-        imgCompartir.setOnClickListener(new View.OnClickListener() {
+        /*imgCompartir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
@@ -186,7 +206,16 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
+        });*/
+
+
+        imgHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
         });
+
 
 
 
@@ -228,7 +257,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         });
 
 
-        imgMoverNoLeidos.setOnClickListener(new View.OnClickListener() {
+        /*imgMoverNoLeidos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
@@ -307,7 +336,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 }
             }
         });
-
+*/
 
         wvwDetalleCircular.getSettings().setJavaScriptEnabled(true);
         wvwDetalleCircular.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
@@ -326,6 +355,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
             int totalElementos = titulo.length;
             int totalEspacios = totalElementos-1;
             if(totalElementos>2){
+                lblTitulo.setText("");
                 lblTitulo.setText(titulo[0]+" "+titulo[1]);
                 String t="";
                 //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
@@ -383,6 +413,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     String[] titulo = tituloCompleto.split(" ");
                     int totalElementos = titulo.length;
                     if(totalElementos>2){
+                        lblTitulo.setText("");
                         lblTitulo.setText(titulo[0]+" "+titulo[1]);
                         String t="";
                         //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
@@ -420,10 +451,10 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     ubicacionIcs = circulares.get(pos).getUbicacionIcs();
                     horaInicioIcs = circulares.get(pos).getHoraInicialIcs();
                     horaFinIcs = circulares.get(pos).getHoraFinalIcs();
-
+                    String nivel = circulares.get(pos).getNivel();
                     new RegistrarLecturaAsyncTask(idCircular,idUsuario).execute();
                     wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
-                    //lblTitulo.setText(circulares.get(pos).getNombre());
+                    lblNivel.setText(nivel);
 
 
                     String tituloCompleto = circulares.get(pos).getNombre();
@@ -431,6 +462,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     int totalElementos = titulo.length;
                     int totalEspacios = totalElementos-1;
                     if(totalElementos>2){
+                        lblTitulo.setText("");
                         lblTitulo.setText(titulo[0]+" "+titulo[1]);
                         String t="";
                         //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
@@ -482,15 +514,17 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     ubicacionIcs = circulares.get(pos).getUbicacionIcs();
                     horaInicioIcs = circulares.get(pos).getHoraInicialIcs();
                     horaFinIcs = circulares.get(pos).getHoraFinalIcs();
+                    String nivel = circulares.get(pos).getNivel();
 
                     new RegistrarLecturaAsyncTask(idCircular,idUsuario).execute();
                     wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
-                    //lblTitulo.setText(circulares.get(pos).getNombre());
+                    lblNivel.setText(nivel);
 
                     String tituloCompleto = circulares.get(pos).getNombre();
                     String[] titulo = tituloCompleto.split(" ");
                     int totalElementos = titulo.length;
                     if(totalElementos>2){
+                        lblTitulo.setText("");
                         lblTitulo.setText(titulo[0]+" "+titulo[1]);
                         String t="";
                         //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
@@ -544,6 +578,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                         int totalElementos = titulo.length;
                         int totalEspacios = totalElementos-1;
                         if(totalElementos>2){
+                            lblTitulo.setText("");
                             lblTitulo.setText(titulo[0]+" "+titulo[1]);
                             String t="";
                             //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
@@ -989,7 +1024,7 @@ public void getCircularId(final int id){
     circularesId.clear();
     final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
-    final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd/MM/yyyy");
+    final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 
     JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO_CIRCULAR+"?id="+id,
             new Response.Listener<JSONArray>() {
@@ -1003,8 +1038,8 @@ public void getCircularId(final int id){
                             String idCircular = jsonObject.getString("id");
                             String nombre = jsonObject.getString("titulo");
                             t2 = nombre;
-                            String fecha1 = jsonObject.getString("created_at");
-                            String fecha2 = jsonObject.getString("updated_at");
+                            String fecha1 = jsonObject.getString("fecha");
+                            String fecha2 = jsonObject.getString("fecha");
                             Date date1=new Date(),date2=new Date();
                             try{
                                 date1 = formatoInicio.parse(fecha1);
@@ -1025,12 +1060,19 @@ public void getCircularId(final int id){
                             String horaInicialIcs = jsonObject.getString("hora_inicial_ics");
                             String horaFinalIcs = jsonObject.getString("hora_final_ics");
                             String ubicacionIcs = jsonObject.getString("ubicacion_ics");
+                            String adjunto = jsonObject.getString("adjunto");
+                            String nivel = "";
 
-                            //No mostrar las eliminadas
+                            if(!jsonObject.getString("nivel").equalsIgnoreCase("null"))
+                                lblNivel.setText(getIntent().getStringExtra("nivel"));
+                            else
+                                lblNivel.setText("");
+
+
 
                                 circularesId.add(new Circular(idCircular,
                                         "Circular No. "+idCircular,
-                                        nombre,"",
+                                        nombre.toUpperCase(),"",
                                         strFecha1,
                                         strFecha2,
                                         estado,
@@ -1041,7 +1083,9 @@ public void getCircularId(final int id){
                                         fechaIcs,
                                         horaInicialIcs,
                                         horaFinalIcs,
-                                        ubicacionIcs));
+                                        ubicacionIcs,
+                                        Integer.parseInt(adjunto),
+                                        nivel));
 
 
                             //String idCircular, String encabezado, String nombre,
@@ -1076,7 +1120,8 @@ public void getCircularId(final int id){
                         int totalElementos = titulo.length;
                         int totalEspacios = totalElementos-1;
                         if(totalElementos>2){
-                            lblTitulo.setText(titulo[0]+" "+titulo[1]);
+                            lblTitulo.setText("");
+                            lblTitulo.setText(titulo[0].toUpperCase()+" "+titulo[1].toUpperCase());
                             String t="";
                             //el titulo 2 tiene desde titulo[2] hasta titulo[totalElementos-1];
                             for(int i=2; i<totalElementos; i++){
@@ -1085,10 +1130,10 @@ public void getCircularId(final int id){
                             }
                             lblTitulo2.setVisibility(View.VISIBLE);
 
-                            lblTitulo2.setText(t);
+                            lblTitulo2.setText(t.toUpperCase());
                         }else{
                             lblTitulo2.setVisibility(View.INVISIBLE);
-                            lblTitulo.setText(circularesId.get(0).getNombre());
+                            lblTitulo.setText(circularesId.get(0).getNombre().toUpperCase());
                         }
                     }catch (Exception ex){
 
@@ -1118,7 +1163,7 @@ public void getCircularId(final int id){
 
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
-        final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 
         JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO2+"?usuario_id="+usuario_id,
                 new Response.Listener<JSONArray>() {
@@ -1131,8 +1176,8 @@ public void getCircularId(final int id){
                                         .get(i);
                                 String idCircular = jsonObject.getString("id");
                                 String nombre = jsonObject.getString("titulo");
-                                String fecha1 = jsonObject.getString("created_at");
-                                String fecha2 = jsonObject.getString("updated_at");
+                                String fecha1 = jsonObject.getString("fecha");
+                                String fecha2 = jsonObject.getString("fecha");
                                 Date date1=new Date(),date2=new Date();
                                 try{
                                     date1 = formatoInicio.parse(fecha1);
@@ -1153,8 +1198,13 @@ public void getCircularId(final int id){
                                 String horaInicialIcs = jsonObject.getString("hora_inicial_ics");
                                 String horaFinalIcs = jsonObject.getString("hora_final_ics");
                                 String ubicacionIcs = jsonObject.getString("ubicacion_ics");
-
-                                //No mostrar las eliminadas
+                                String adjunto = jsonObject.getString("adjunto");
+                                String nivel = "";
+                                try{
+                                    nivel=jsonObject.getString("nivel");
+                                }catch (Exception ex){
+                                    nivel="";
+                                }
                                 if(eliminada!="1"){
                                     circulares.add(new Circular(idCircular,
                                             "Circular No. "+idCircular,
@@ -1169,7 +1219,9 @@ public void getCircularId(final int id){
                                             fechaIcs,
                                             horaInicialIcs,
                                             horaFinalIcs,
-                                            ubicacionIcs));
+                                            ubicacionIcs,
+                                            Integer.parseInt(adjunto),
+                                            nivel));
                                 }
 
                                 //String idCircular, String encabezado, String nombre,
@@ -1237,7 +1289,8 @@ public void getCircularId(final int id){
                     estado,
                     Integer.parseInt(leido),
                     Integer.parseInt(favorito),
-                    contenido,"","","","",""));
+                    contenido,"","","","","",0,"")
+                    );
 
 
 

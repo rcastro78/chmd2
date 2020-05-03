@@ -22,6 +22,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
+import com.activeandroid.query.Delete;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -235,7 +236,8 @@ public CircularesAdapter adapter = null;
                 intent.putExtra("ubicaIcs",circular.getUbicacionIcs());
                 intent.putExtra("horaInicioIcs",circular.getHoraInicialIcs());
                 intent.putExtra("horaFinIcs",circular.getHoraFinalIcs());
-
+                intent.putExtra("adjunto",circular.getAdjunto());
+                intent.putExtra("nivel",circular.getNivel());
                 getActivity().startActivity(intent);
 
             }
@@ -310,8 +312,8 @@ public CircularesAdapter adapter = null;
                                         .get(i);
                                 String idCircular = jsonObject.getString("id");
                                 String nombre = jsonObject.getString("titulo");
-                                String fecha1 = jsonObject.getString("created_at");
-                                String fecha2 = jsonObject.getString("updated_at");
+                                String fecha1 = jsonObject.getString("fecha");
+                                String fecha2 = jsonObject.getString("fecha");
                                 Date date1=new Date(),date2=new Date();
                                 try{
                                     date1 = formatoInicio.parse(fecha1);
@@ -332,8 +334,13 @@ public CircularesAdapter adapter = null;
                                 String horaInicialIcs = jsonObject.getString("hora_inicial_ics");
                                 String horaFinalIcs = jsonObject.getString("hora_final_ics");
                                 String ubicacionIcs = jsonObject.getString("ubicacion_ics");
-
-
+                                String adjunto = jsonObject.getString("adjunto");
+                                String nivel = "";
+                                try{
+                                    nivel=jsonObject.getString("nivel");
+                                }catch (Exception ex){
+                                    nivel="";
+                                }
                                 //No mostrar las eliminadas
                                 if(eliminada!="1"){
                                     circulares.add(new Circular(idCircular,
@@ -349,7 +356,9 @@ public CircularesAdapter adapter = null;
                                             fechaIcs,
                                             horaInicialIcs,
                                             horaFinalIcs,
-                                            ubicacionIcs));
+                                            ubicacionIcs,
+                                            Integer.parseInt(adjunto),
+                                            nivel));
                                 }
 
                                 circulares2.add(new Circular(idCircular,
@@ -383,11 +392,9 @@ public CircularesAdapter adapter = null;
                        //llenado de datos
                         //eliminar circulares y guardar las primeras 10 del registro
                         //Borra toda la tabla
-                        //new Delete().from(DBCircular.class).execute();
+                        new Delete().from(DBCircular.class).execute();
                         int maxRecuento = totalCirculares;
-                        if(maxRecuento>20){
-                            maxRecuento=20;
-                        }
+
                         for(int i=0; i<maxRecuento; i++){
                             DBCircular dbCircular = new DBCircular();
                             dbCircular.idCircular = circulares2.get(i).getIdCircular();

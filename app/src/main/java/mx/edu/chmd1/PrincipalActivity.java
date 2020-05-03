@@ -172,11 +172,11 @@ public class PrincipalActivity extends AppCompatActivity {
     }
 
     private void llenarMenu(){
-        items.add(new Menu(1,"Circulares",R.drawable.circulares2));
-        items.add(new Menu(2,"Mi Maguen",R.drawable.maguen2));
-        items.add(new Menu(3,"Mi Credencial",R.drawable.credencial2));
+        items.add(new Menu(1,"Circulares",R.drawable.circulares256));
+        items.add(new Menu(2,"Mi Maguen",R.drawable.mi_maguen256));
+        items.add(new Menu(3,"Mi Credencial",R.drawable.mi_credencial256));
         //items.add(new Menu(4,"Notificaciones",R.drawable.notificaciones));
-        items.add(new Menu(5,"Cerrar Sesión",R.drawable.cerrar2));
+        items.add(new Menu(5,"Cerrar Sesión",R.drawable.cerrar_sesion256));
         menuAdapter = new MenuAdapter(PrincipalActivity.this,items);
         lstPrincipal.setAdapter(menuAdapter);
     }

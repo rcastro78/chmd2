@@ -22,15 +22,14 @@
     </LinearLayout>
 
 
-
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="192dp"
-        android:layout_height="192dp"
+        android:layout_width="112dp"
+        android:layout_height="112dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
-        app:srcCompat="@drawable/app03" />
+        app:srcCompat="@drawable/encab2" />
 
     <ListView
         android:layout_width="wrap_content"

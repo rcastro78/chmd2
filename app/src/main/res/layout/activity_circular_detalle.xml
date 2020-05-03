@@ -16,14 +16,63 @@
         android:weightSum="100"
         android:orientation="vertical"
         android:layout_below="@id/toolbar">
+
+
+
+
+
         <LinearLayout
+            android:id="@+id/llContenedorMenu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="90"
-            android:weightSum="140"
-            android:orientation="horizontal"
-            android:background="@color/colorPrimary">
+            android:layout_weight="80"
+            android:background="#005089"
+            android:orientation="vertical"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:background="#008ECF"
+                android:weightSum="10">
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="8">
+
+                  <ImageView
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:padding="4dp"
+                      android:src="@drawable/icono_grande"
+                      android:tint="#fff"></ImageView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:textColor="#fff"
+                        android:layout_centerHorizontal="true"
+                        android:text="COLEGIO HEBREO MAGUEN DAVID" />
+                </RelativeLayout>
+
+            </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_weight="1"
+    android:weightSum="140">
 
 
             <RelativeLayout
@@ -32,111 +81,88 @@
                 android:layout_weight="20">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:id="@+id/imgHome"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_margin="12dp"
-                    android:id="@+id/imgMoverFavSeleccionados"
                     android:clickable="true"
-
-                    android:src="@drawable/appmenu06"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="20">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="12dp"
-                    android:id="@+id/imgMoverComp"
-                    android:clickable="true"
-                    android:src="@drawable/appmenu08"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="20">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="12dp"
-                    android:id="@+id/imgMoverNoLeidos"
-                    android:clickable="true"
-
-                    android:src="@drawable/appmenu05"/>
-
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="20">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="12dp"
-                    android:id="@+id/imgCalendario"
-                    android:textSize="24dp"
-                    android:clickable="true"
-                    android:padding="6dp"
-                    android:tint="@color/colorPrimaryDark"
-                    android:textAlignment="center"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:background="@color/colorPrimary"
-                    android:src="@drawable/calendar"/>
-            </RelativeLayout>
+                    android:src="@drawable/home_blanco" />
 
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="20">
 
-
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="12dp"
                     android:id="@+id/btnAnterior"
-                    android:textSize="24dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+
                     android:clickable="true"
-                    android:tint="@color/colorPrimaryDark"
+                    android:src="@drawable/ic_arrow_back_black_48dp"
                     android:textAlignment="center"
-                    android:layout_centerInParent="true"
                     android:textColor="@color/colorPrimaryDark"
-                    android:background="@color/colorPrimary"
-                    android:src="@drawable/ic_arrow_back_black_48dp"/>
-
-
+                    android:textSize="24dp"
+                    android:layout_centerInParent="true"
+                    android:tint="#fff" />
             </RelativeLayout>
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="20">
+
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="12dp"
                     android:id="@+id/btnSiguiente"
-                    android:textSize="24dp"
-                    android:tint="@color/colorPrimaryDark"
-                    android:textAlignment="center"
-                    android:clickable="true"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_centerInParent="true"
+                    android:clickable="true"
+                    android:src="@drawable/ic_arrow_forward_black_48dp"
+                    android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
-                    android:background="@color/colorPrimary"
-                    android:src="@drawable/ic_arrow_forward_black_48dp"/>
+                    android:textSize="24dp"
+                    android:tint="#fff" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20">
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20">
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20">
+
+                <ImageView
+                    android:id="@+id/imgMovFav"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:src="@drawable/appmenu06"
+                    android:layout_centerInParent="true"
+                    android:tint="#fff" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -145,22 +171,23 @@
                 android:layout_weight="20">
 
                 <ImageView
+                    android:id="@+id/imgEliminarSeleccionados"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="12dp"
-                    android:id="@+id/imgEliminarSeleccionados"
                     android:clickable="true"
-                    android:src="@drawable/appmenu07"/>
+                    android:tint="#fff"
+                    android:src="@drawable/appmenu07" />
 
             </RelativeLayout>
 
         </LinearLayout>
-
+        </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="10"
+        android:layout_weight="20"
         android:weightSum="100">
 
         <LinearLayout
@@ -171,43 +198,34 @@
             android:orientation="horizontal"
             android:background="@null">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="50">
+                android:layout_weight="50"
+                android:orientation="vertical"
 
-                <ImageView
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/lblNivel"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/logo2"
-                    android:padding="8dp"
-                    ></ImageView>
-
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="50">
-
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingRight="6dp"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/textoOscuro" />
 
                 <TextView
                     android:id="@+id/lblFecha"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="00/00/2019"
-                    android:padding="4dp"
-                    android:gravity="center_horizontal"
-                    android:layout_weight="50"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/textoMasOscuro"
-                    android:textSize="24dp" />
+                    android:text="00/00/2020"
+                    android:paddingRight="6dp"
+                    android:textAlignment="textEnd"
 
-
-            </RelativeLayout>
+                    android:textColor="@color/textoOscuro"
+                    android:layout_weight="1"/>
+            </LinearLayout>
 
 
         </LinearLayout>

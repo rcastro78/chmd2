@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import mx.edu.chmd1.R;
@@ -64,11 +65,11 @@ public class CircularesAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.celda_circulares, null);
             holder = new ViewHolder();
-            holder.lblNomCircular = convertView.findViewById(R.id.lblNomCircular);
+
             holder.lblEncab = convertView.findViewById(R.id.lblEncab);
-            holder.lblFecha1 = convertView.findViewById(R.id.lblFecha1);
-            holder.lblFecha2 = convertView.findViewById(R.id.lblFecha2);
+            holder.lblDia = convertView.findViewById(R.id.lblDia);
             holder.imgCircular = convertView.findViewById(R.id.imgCircular);
+            holder.imgAdjunto = convertView.findViewById(R.id.imgClip);
             holder.llContainer = convertView.findViewById(R.id.llContainer);
             holder.chkSeleccion = convertView.findViewById(R.id.chkSeleccion);
 
@@ -95,21 +96,26 @@ public class CircularesAdapter extends BaseAdapter {
         }
 
         holder.lblEncab.setTypeface(tfBold);
-        holder.lblNomCircular.setTypeface(tf);
-        holder.lblFecha1.setTypeface(tf);
-        holder.lblFecha2.setTypeface(tf);
+
+        holder.lblDia.setTypeface(tf);
 
 
+        if(c.getAdjunto()==1){
+            holder.imgAdjunto.setVisibility(View.VISIBLE);
+        }
+        if(c.getAdjunto()==0){
+            holder.imgAdjunto.setVisibility(View.GONE);
+        }
         if(c.getLeida()==1){
-            holder.imgCircular.setImageResource(R.drawable.leidas_azul);
+            holder.imgCircular.setImageResource(R.drawable.circle_white);
             holder.llContainer.setBackgroundColor(Color.WHITE);
         }
         if(c.getLeida()==0){
-            holder.imgCircular.setImageResource(R.drawable.noleidas_celeste);
-            holder.llContainer.setBackgroundColor(Color.parseColor("#D4D4D4"));
+            holder.imgCircular.setImageResource(R.drawable.circle);
+            holder.llContainer.setBackgroundColor(Color.WHITE);
         }
         if(c.getFavorita()==1){
-            holder.imgCircular.setImageResource(R.drawable.appmenu06);
+            holder.imgCircular.setImageResource(R.drawable.star);
             holder.llContainer.setBackgroundColor(Color.WHITE);
         }
         if(c.getCompartida()==1){
@@ -122,11 +128,19 @@ public class CircularesAdapter extends BaseAdapter {
             holder.llContainer.setBackgroundColor(Color.WHITE);
         }
 
-        holder.lblEncab.setText(c.getNombre());
-        holder.lblNomCircular.setText(c.getEncabezado());
-        holder.lblFecha1.setText(c.getFecha1());
-        holder.lblFecha2.setText(c.getFecha2());
-        //holder.lblFecha2.setText("");
+        holder.lblEncab.setText(c.getNombre().toUpperCase());
+
+
+              //holder.lblFecha2.setText("");
+        final SimpleDateFormat formatoInicio = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatoDestino = new SimpleDateFormat("EEEE");
+        try {
+            java.util.Date date1 = formatoInicio.parse(c.getFecha2());
+            String strFecha1 = formatoDestino.format(date1);
+            holder.lblDia.setText(strFecha1);
+        }catch (Exception ex){
+
+        }
 
         holder.chkSeleccion.setTag(position);
         holder.chkSeleccion.setChecked(items.get(position).isSelected());
@@ -141,8 +155,8 @@ public class CircularesAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lblNomCircular,lblEncab,lblFecha1,lblFecha2;
-        ImageView imgCircular;
+        TextView lblNomCircular,lblEncab,lblDia;
+        ImageView imgCircular,imgAdjunto;
         LinearLayout llContainer;
         CheckBox chkSeleccion;
 
