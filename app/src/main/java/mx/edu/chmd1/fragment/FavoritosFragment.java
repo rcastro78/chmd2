@@ -72,6 +72,7 @@ public class FavoritosFragment extends Fragment {
     static String METODO_FAV="favCircular.php";
     ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados;
     String rsp="";
+    String idUsuarioCredencial;
     ArrayList<String> seleccionados = new ArrayList<String>();
 
     public boolean hayConexion() {
@@ -92,7 +93,7 @@ public class FavoritosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
         int idUsuario = Integer.parseInt(idUsuarioCredencial);
         if(hayConexion())
             getCirculares(idUsuario);
@@ -129,7 +130,7 @@ public class FavoritosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new FavAsyncTask(c.getIdCircular(),"5").execute();
+                                new FavAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -164,7 +165,7 @@ public class FavoritosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new RegistrarLecturaAsyncTask(c.getIdCircular(),"5").execute();
+                                new RegistrarLecturaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -197,7 +198,7 @@ public class FavoritosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new EliminaAsyncTask(c.getIdCircular(),"5").execute();
+                                new EliminaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -232,6 +233,12 @@ public class FavoritosFragment extends Fragment {
                 intent.putExtra("horaInicioIcs",circular.getHoraInicialIcs());
                 intent.putExtra("horaFinIcs",circular.getHoraFinalIcs());
                 intent.putExtra("viaNotif",0);
+                if(!circular.getNivel().equalsIgnoreCase("null")){
+                    intent.putExtra("nivel",circular.getNivel());
+                }else{
+                    intent.putExtra("nivel","");
+                }
+
                 getActivity().startActivity(intent);
 
             }

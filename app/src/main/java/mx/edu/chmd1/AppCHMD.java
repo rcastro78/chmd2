@@ -25,26 +25,8 @@ public class AppCHMD extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         mInstance = this;
-        Configuration dbConfiguration = new Configuration.Builder(this).setDatabaseName("chmd.db").create();
-        ActiveAndroid.initialize(dbConfiguration);
-
-        Bitly.initialize(this, "e8bb7ba58c708d041c59b1ba04616b0668bdf53b", Arrays.asList("chmd.edu.mx","chmd.edu.mx"), Arrays.asList("yourscheme"), new Bitly.Callback() {
-            @Override
-            public void onResponse(Response response) {
-                // response provides a Response object which contains the full URL information
-                // response includes a status code
-                // Your custom logic goes here...
-            }
-
-            @Override
-            public void onError(Error error) {
-                // error provides any errors in retrieving information about the URL
-                // Your custom logic goes here...
-            }
-        });
-
-
     }
 
     public static synchronized AppCHMD getInstance() {
@@ -83,5 +65,4 @@ public class AppCHMD extends Application {
 
 
 }
-
 

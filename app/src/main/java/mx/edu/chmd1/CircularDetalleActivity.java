@@ -148,9 +148,10 @@ public class CircularDetalleActivity extends AppCompatActivity {
 
 
 
-        if(!getIntent().getStringExtra("nivel").equalsIgnoreCase("null"))
+        if(getIntent().getStringExtra("nivel")!="null")
             lblNivel.setText(getIntent().getStringExtra("nivel"));
-
+        else
+            lblNivel.setText("");
         imgMoverFavSeleccionados = findViewById(R.id.imgMovFav);
         imgEliminarSeleccionados = findViewById(R.id.imgEliminarSeleccionados);
         //imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);

@@ -66,7 +66,7 @@ public class LeidosFragment extends Fragment {
     SharedPreferences sharedPreferences;
     ArrayList<String> seleccionados = new ArrayList<>();
     ImageView imgMoverFavSeleccionados,imgMoverNoLeidos,imgEliminarSeleccionados;
-
+    String idUsuarioCredencial;
     public boolean hayConexion() {
         ConnectivityManager cm =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -87,7 +87,7 @@ public class LeidosFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
         int idUsuario = Integer.parseInt(idUsuarioCredencial);
         if(hayConexion())
             getCirculares(idUsuario);
@@ -123,7 +123,7 @@ public class LeidosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new NoLeerAsyncTask(c.getIdCircular(),"5").execute();
+                                new NoLeerAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -157,7 +157,7 @@ public class LeidosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new FavAsyncTask(c.getIdCircular(),"5").execute();
+                                new FavAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -194,7 +194,7 @@ public class LeidosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new EliminaAsyncTask(c.getIdCircular(),"5").execute();
+                                new EliminaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 

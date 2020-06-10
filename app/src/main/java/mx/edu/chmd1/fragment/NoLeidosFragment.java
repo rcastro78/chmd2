@@ -73,7 +73,7 @@ public class NoLeidosFragment extends Fragment {
     String rsp="";
     ArrayList<String> seleccionados = new ArrayList<String>();
     SharedPreferences sharedPreferences;
-
+    String idUsuarioCredencial;
 
     public boolean hayConexion() {
         ConnectivityManager cm =
@@ -94,7 +94,7 @@ public class NoLeidosFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(hayConexion()){
-            String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+            idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
             int idUsuario = Integer.parseInt(idUsuarioCredencial);
             getCirculares(idUsuario);
         }
@@ -200,7 +200,7 @@ public class NoLeidosFragment extends Fragment {
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new EliminaAsyncTask(c.getIdCircular(),"5").execute();
+                                new EliminaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -237,7 +237,11 @@ public class NoLeidosFragment extends Fragment {
                 intent.putExtra("ubicaIcs",circular.getUbicacionIcs());
                 intent.putExtra("horaInicioIcs",circular.getHoraInicialIcs());
                 intent.putExtra("horaFinIcs",circular.getHoraFinalIcs());
-
+                if(!circular.getNivel().equalsIgnoreCase("null")){
+                    intent.putExtra("nivel",circular.getNivel());
+                }else{
+                    intent.putExtra("nivel","");
+                }
 
                 getActivity().startActivity(intent);
 

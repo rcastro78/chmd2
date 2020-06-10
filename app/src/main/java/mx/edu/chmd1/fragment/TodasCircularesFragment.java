@@ -71,6 +71,7 @@ public CircularesAdapter adapter = null;
     static String BASE_URL;
     static String RUTA;
     String rsp;
+    String idUsuarioCredencial;
     SharedPreferences sharedPreferences;
     int totalCirculares=0;
     boolean todos=false;
@@ -99,7 +100,7 @@ public CircularesAdapter adapter = null;
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getActivity().getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-        String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
         idUsuario = Integer.parseInt(idUsuarioCredencial);
         //Toast.makeText(getActivity().getApplicationContext(),idUsuarioCredencial,Toast.LENGTH_LONG).show();
 
@@ -126,7 +127,7 @@ public CircularesAdapter adapter = null;
 
                                 for (int i = 0; i < seleccionados.size(); i++) {
                                     Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                    new FavAsyncTask(c.getIdCircular(), "5").execute();
+                                    new FavAsyncTask(c.getIdCircular(), idUsuarioCredencial).execute();
 
                                 }
 
@@ -162,7 +163,7 @@ public CircularesAdapter adapter = null;
 
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new RegistrarLecturaAsyncTask(c.getIdCircular(),"5").execute();
+                                new RegistrarLecturaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
 
                             }
 
@@ -196,7 +197,7 @@ public CircularesAdapter adapter = null;
 
                                 for (int i = 0; i < seleccionados.size(); i++) {
                                     Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                    new EliminaAsyncTask(c.getIdCircular(), "5").execute();
+                                    new EliminaAsyncTask(c.getIdCircular(), idUsuarioCredencial).execute();
 
                                 }
 
@@ -237,7 +238,13 @@ public CircularesAdapter adapter = null;
                 intent.putExtra("horaInicioIcs",circular.getHoraInicialIcs());
                 intent.putExtra("horaFinIcs",circular.getHoraFinalIcs());
                 intent.putExtra("adjunto",circular.getAdjunto());
-                intent.putExtra("nivel",circular.getNivel());
+                if(!circular.getNivel().equalsIgnoreCase("null")){
+                    intent.putExtra("nivel",circular.getNivel());
+                }else{
+                    intent.putExtra("nivel","");
+                }
+
+
                 getActivity().startActivity(intent);
 
             }
