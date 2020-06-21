@@ -63,6 +63,8 @@ public class PrincipalActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String correo,rsp;
     static String GET_USUARIO="getUsuarioEmail.php";
+    static String GET_VIGENCIA="getVigencia.php";
+    static String GET_CIFRADO="cifrar.php";
     static String METODO_REG="registrarDispositivo.php";
     static String TAG=PrincipalActivity.class.getName();
     GoogleSignInClient mGoogleSignInClient;
@@ -104,7 +106,8 @@ public class PrincipalActivity extends AppCompatActivity {
         correo = sharedPreferences.getString("correoRegistrado","");
         idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
         //getUsuario(correo);
-
+        getVigencia(idUsuarioCredencial);
+        getCifrado(idUsuarioCredencial);
         ShortcutBadger.applyCount(getApplicationContext(), 0);
         FirebaseInstanceId.getInstance().getInstanceId() .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
@@ -267,21 +270,6 @@ public class PrincipalActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
 
-                        /*
-                         * [{"id":"1","nombre":"SITT COHEN RAUL","numero":"0244","telefono":"52-51-91-34",
-                         * "correo":"raul@gconcreta.com","calle":"Ahuehuetes Nte. 1333- T. Vendome 304",
-                         * "colonia":"Bosques De Las Lomas","cp":"11700","ent":"CUDAD DE MEXICO","familia":"SITT SASSON",
-                         * "estatus":"2","fecha":"2019-08-22 16:36:03","tipo":"3","correo2":"raul@gconcreta.com",
-                         * "fotografia":"C:\\IDCARDDESIGN\\CREDENCIALES\\padres\\rosa maya.JPG","celular":"04455-51002067","token":"",
-                         * "vigencia":"1","responsable":"PADRE","ntarjeton1":"0","ntarjeton2":"0","perfil_admin":"0"}]
-                         * */
-
-
-/*
-* String idUsuario, String nombre, String numero,
-                   String telefono, String correo, String familia
-* */
-                    //Toast.makeText(getApplicationContext(),""+response.length(),Toast.LENGTH_LONG).show();
 
                         if(response.length()<=0){
                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -378,7 +366,141 @@ public class PrincipalActivity extends AppCompatActivity {
         // Adding request to request queue
         AppCHMD.getInstance().addToRequestQueue(req);
     }
+    public void getVigencia(String idUsuario){
 
 
+        JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+GET_VIGENCIA+"?idUsuario="+idUsuario,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+                            for(int i=0; i<response.length(); i++){
+                                JSONObject jsonObject = (JSONObject) response
+                                        .get(i);
+                                String vigencia = jsonObject.getString("texto");
+                                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("vigencia",vigencia);
+
+                                //Toast.makeText(getApplicationContext(),foto,Toast.LENGTH_LONG).show();
+                                editor.commit();
+
+
+                            }
+
+
+
+
+
+                        }catch (JSONException e)
+                        {
+                            e.printStackTrace();
+
+
+                        }
+                        //TODO: Cambiarlo cuando pase a prueba en MX
+                        // if (existe.equalsIgnoreCase("1")) {
+                        //llenado de datos
+                        //eliminar circulares y guardar las primeras 10 del registro
+                        //Borra toda la tabla
+                        /*new Delete().from(DBCircular.class).execute();
+
+                        for(int i=0; i<10; i++){
+                            DBCircular dbCircular = new DBCircular();
+                            dbCircular.idCircular = circulares.get(i).getIdCircular();
+                            dbCircular.estado = circulares.get(i).getEstado();
+                            dbCircular.nombre = circulares.get(i).getNombre();
+                            dbCircular.textoCircular = circulares.get(i).getTextoCircular();
+                            dbCircular.save();
+                        }*/
+
+
+
+                    }
+                }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                VolleyLog.d("ERROR", "Error: " + error.getMessage());
+                /*
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                        */
+
+            }
+        });
+
+        // Adding request to request queue
+        AppCHMD.getInstance().addToRequestQueue(req);
+    }
+    public void getCifrado(String idUsuario){
+
+
+        JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+GET_CIFRADO+"?idUsuario="+idUsuario,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+                            for(int i=0; i<response.length(); i++){
+                                JSONObject jsonObject = (JSONObject) response
+                                        .get(i);
+                                String cifrado = jsonObject.getString("cifrado");
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("cifrado",cifrado);
+
+                                //Toast.makeText(getApplicationContext(),foto,Toast.LENGTH_LONG).show();
+                                editor.commit();
+
+
+                            }
+
+
+
+
+
+                        }catch (JSONException e)
+                        {
+                            e.printStackTrace();
+
+
+                        }
+                        //TODO: Cambiarlo cuando pase a prueba en MX
+                        // if (existe.equalsIgnoreCase("1")) {
+                        //llenado de datos
+                        //eliminar circulares y guardar las primeras 10 del registro
+                        //Borra toda la tabla
+                        /*new Delete().from(DBCircular.class).execute();
+
+                        for(int i=0; i<10; i++){
+                            DBCircular dbCircular = new DBCircular();
+                            dbCircular.idCircular = circulares.get(i).getIdCircular();
+                            dbCircular.estado = circulares.get(i).getEstado();
+                            dbCircular.nombre = circulares.get(i).getNombre();
+                            dbCircular.textoCircular = circulares.get(i).getTextoCircular();
+                            dbCircular.save();
+                        }*/
+
+
+
+                    }
+                }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                VolleyLog.d("ERROR", "Error: " + error.getMessage());
+                /*
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                        */
+
+            }
+        });
+
+        // Adding request to request queue
+        AppCHMD.getInstance().addToRequestQueue(req);
+    }
 
 }

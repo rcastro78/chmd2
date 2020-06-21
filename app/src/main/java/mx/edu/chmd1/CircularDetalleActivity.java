@@ -82,7 +82,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     String idUsuario,rsp;
     String temaIcs,fechaIcs,ubicacionIcs,horaInicioIcs,horaFinIcs;
     ImageView imgHome,imgEliminarSeleccionados,imgMoverFavSeleccionados;
-    ImageView btnSiguiente,btnAnterior;
+    ImageView btnSiguiente,btnAnterior,btnCalendario;
     Typeface t;
     String t2;
     int pos=0;
@@ -155,7 +155,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         imgMoverFavSeleccionados = findViewById(R.id.imgMovFav);
         imgEliminarSeleccionados = findViewById(R.id.imgEliminarSeleccionados);
         //imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);
-        //imgCalendario = findViewById(R.id.imgCalendario);
+        btnCalendario = findViewById(R.id.btnCalendario);
         imgHome = findViewById(R.id.imgHome);
         btnSiguiente = findViewById(R.id.btnSiguiente);
         btnAnterior = findViewById(R.id.btnAnterior);
@@ -172,11 +172,15 @@ public class CircularDetalleActivity extends AppCompatActivity {
             idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
             idUsuario = idUsuarioCredencial;
             contenidoCircular = getIntent().getStringExtra("contenidoCircular");
-            /*temaIcs = getIntent().getStringExtra("temaIcs");
+            temaIcs = getIntent().getStringExtra("temaIcs");
             fechaIcs = getIntent().getStringExtra("fechaIcs");
             ubicacionIcs = getIntent().getStringExtra("ubicaIcs");
             horaInicioIcs = getIntent().getStringExtra("horaInicioIcs");
-            horaFinIcs = getIntent().getStringExtra("horaFinIcs");*/
+            horaFinIcs = getIntent().getStringExtra("horaFinIcs");
+            if(!fechaIcs.equalsIgnoreCase("00:00:00"))
+                btnCalendario.setVisibility(View.VISIBLE);
+            else
+                btnCalendario.setVisibility(View.GONE);
         }catch (Exception ex){
 
         }
@@ -274,10 +278,10 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
-        });
+        });*/
 
 
-        imgCalendario.setOnClickListener(new View.OnClickListener() {
+        btnCalendario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(hayConexion()){
@@ -337,7 +341,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 }
             }
         });
-*/
+
 
         wvwDetalleCircular.getSettings().setJavaScriptEnabled(true);
         wvwDetalleCircular.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
@@ -516,7 +520,10 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     horaInicioIcs = circulares.get(pos).getHoraInicialIcs();
                     horaFinIcs = circulares.get(pos).getHoraFinalIcs();
                     String nivel = circulares.get(pos).getNivel();
-
+                    if(!fechaIcs.equalsIgnoreCase("00:00:00"))
+                        btnCalendario.setVisibility(View.VISIBLE);
+                    else
+                        btnCalendario.setVisibility(View.GONE);
                     new RegistrarLecturaAsyncTask(idCircular,idUsuario).execute();
                     wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
                     lblNivel.setText(nivel);
@@ -572,7 +579,10 @@ public class CircularDetalleActivity extends AppCompatActivity {
                         new RegistrarLecturaAsyncTask(idCircular,idUsuario).execute();
                         wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
                         //lblTitulo.setText(circulares.get(pos).getNombre());
-
+                        if(!fechaIcs.equalsIgnoreCase("00:00:00"))
+                            btnCalendario.setVisibility(View.VISIBLE);
+                        else
+                            btnCalendario.setVisibility(View.GONE);
 
                         String tituloCompleto = circulares.get(pos).getNombre();
                         String[] titulo = tituloCompleto.split(" ");

@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +23,10 @@ import com.google.zxing.common.BitMatrix;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
@@ -31,7 +37,7 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
     static String BASE_URL;
     static String RUTA;
     SharedPreferences sharedPreferences;
-    String fotoPadre="";
+    String cifrado="",vigencia="";
     int idUsuario=0;
 
 
@@ -68,15 +74,20 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         lblEncabezado.setTypeface(tf1);
         lblNombrePadre = findViewById(R.id.lblNombrePadre);
         lblPadre = findViewById(R.id.lblPadre);
-        lblNumFam = findViewById(R.id.lblNumFam);
+        lblNumFam = findViewById(R.id.lblVigencia);
         imgFotoPadre =findViewById(R.id.imgFotoPadre);
         imgQR =findViewById(R.id.imgQR);
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
+        cifrado = sharedPreferences.getString("cifrado","");
+        vigencia = sharedPreferences.getString("vigencia","");
         lblNombrePadre.setText(sharedPreferences.getString("nombreCredencial","S/N"));
-        lblNumFam.setText("Número de familia: "+sharedPreferences.getString("numeroCredencial","0"));
+        lblNumFam.setText("Vigente hasta: "+vigencia);
         lblPadre.setText(sharedPreferences.getString("responsableCredencial","N/A"));
+
+
+
 
         lblNombrePadre.setTypeface(tf);
         lblPadre.setTypeface(tf);
@@ -106,7 +117,7 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
                         .into(imgFotoPadre);
 
                 try{
-                    Bitmap bmp = crearQR(BASE_URL_FOTO+fotoUrl);
+                    Bitmap bmp = crearQR(cifrado);
                     imgQR.setImageBitmap(bmp);
                 }catch(Exception ex){
                 }
@@ -118,7 +129,7 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
                         .into(imgFotoPadre);
 
                 try{
-                    Bitmap bmp = crearQR(fotoUrl);
+                    Bitmap bmp = crearQR(cifrado);
                     imgQR.setImageBitmap(bmp);
                 }catch(Exception ex){
                 }
@@ -184,5 +195,25 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         }
 
     }
+
+
+    public static byte[] encrypt(byte[] data, byte[] key, byte[] ivs) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+            byte[] finalIvs = new byte[16];
+            int len = ivs.length > 16 ? 16 : ivs.length;
+            System.arraycopy(ivs, 0, finalIvs, 0, len);
+            IvParameterSpec ivps = new IvParameterSpec(finalIvs);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivps);
+            return cipher.doFinal(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 
 }

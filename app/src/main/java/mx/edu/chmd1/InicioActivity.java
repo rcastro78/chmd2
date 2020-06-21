@@ -170,7 +170,6 @@ ImageButton fabLogin;
     }
 
 
-
     public boolean hayConexion() {
         ConnectivityManager cm =
                 (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -190,21 +189,7 @@ ImageButton fabLogin;
                     @Override
                     public void onResponse(JSONArray response) {
 
-                        /*
-                         * [{"id":"1","nombre":"SITT COHEN RAUL","numero":"0244","telefono":"52-51-91-34",
-                         * "correo":"raul@gconcreta.com","calle":"Ahuehuetes Nte. 1333- T. Vendome 304",
-                         * "colonia":"Bosques De Las Lomas","cp":"11700","ent":"CUDAD DE MEXICO","familia":"SITT SASSON",
-                         * "estatus":"2","fecha":"2019-08-22 16:36:03","tipo":"3","correo2":"raul@gconcreta.com",
-                         * "fotografia":"C:\\IDCARDDESIGN\\CREDENCIALES\\padres\\rosa maya.JPG","celular":"04455-51002067","token":"",
-                         * "vigencia":"1","responsable":"PADRE","ntarjeton1":"0","ntarjeton2":"0","perfil_admin":"0"}]
-                         * */
 
-
-/*
-* String idUsuario, String nombre, String numero,
-                   String telefono, String correo, String familia
-* */
-                        //Toast.makeText(getApplicationContext(),""+response.length(),Toast.LENGTH_LONG).show();
 
                         if(response.length()<=0){
                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -301,6 +286,7 @@ ImageButton fabLogin;
         // Adding request to request queue
         AppCHMD.getInstance().addToRequestQueue(req);
     }
+
 
 
 
