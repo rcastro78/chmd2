@@ -1,6 +1,7 @@
 package mx.edu.chmd1;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -65,8 +66,8 @@ import mx.edu.chmd1.modelosDB.DBCircular;
 import mx.edu.chmd1.utilerias.OnSwipeTouchListener;
 
 public class CircularDetalleActivity extends AppCompatActivity {
-    static String METODO="getCircularId2.php";
-    static String METODO_CIRCULAR="getCircularId.php";
+    static String METODO="getCircularId4.php";
+    static String METODO_CIRCULAR="getCircularId4.php";
     static String METODO2="getCircularesUsuarios.php";
     static String METODO_REG="leerCircular.php";
     static String METODO_NOLEER="noleerCircular.php";
@@ -76,7 +77,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     static String RUTA;
     private OnSwipeTouchListener onSwipeTouchListener;
     SharedPreferences sharedPreferences;
-    TextView lblTitulo,lblTitulo2,lblEncabezado,lblFecha,lblNivel;
+    TextView lblTitulo,lblTitulo2,lblEncabezado;
     WebView wvwDetalleCircular;
     String idCircular,contenidoCircular;
     String idUsuario,rsp;
@@ -115,7 +116,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 finish();
             }
         });
-        t = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedBold_21016.ttf");
+        t = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedMedium_21022.ttf");
         lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
         lblEncabezado.setText("Circular");
         lblEncabezado.setTypeface(t);
@@ -127,15 +128,15 @@ public class CircularDetalleActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         lblTitulo = findViewById(R.id.lblTitulo);
         lblTitulo2 = findViewById(R.id.lblTitulo2);
-        lblFecha = findViewById(R.id.lblFecha);
-        lblNivel = findViewById(R.id.lblNivel);
+        //lblFecha = findViewById(R.id.lblFecha);
+        //lblNivel = findViewById(R.id.lblNivel);
         lblTitulo.setTypeface(t);
         lblTitulo2.setTypeface(t);
-        lblFecha.setTypeface(t);
-        lblNivel.setTypeface(t);
+        //lblFecha.setTypeface(t);
+        //lblNivel.setTypeface(t);
 
 
-        final SimpleDateFormat formatoInicio = new SimpleDateFormat("dd/MM/yyyy");
+        /*final SimpleDateFormat formatoInicio = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat formatoDestino = new SimpleDateFormat("dd 'de' MMM 'de' yyyy");
         try{
             Date date1 = formatoInicio.parse(getIntent().getStringExtra("fechaCircular"));
@@ -143,15 +144,15 @@ public class CircularDetalleActivity extends AppCompatActivity {
             lblFecha.setText(strFecha);
         }catch (Exception ex){
 
-        }
+        }*/
         
 
 
 
-        if(getIntent().getStringExtra("nivel")!="null")
+       /* if(getIntent().getStringExtra("nivel")!="null")
             lblNivel.setText(getIntent().getStringExtra("nivel"));
         else
-            lblNivel.setText("");
+            lblNivel.setText("");*/
         imgMoverFavSeleccionados = findViewById(R.id.imgMovFav);
         imgEliminarSeleccionados = findViewById(R.id.imgEliminarSeleccionados);
         //imgMoverNoLeidos = findViewById(R.id.imgMoverNoLeidos);
@@ -164,7 +165,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         final int viaNotif = getIntent().getIntExtra("viaNotif",0);
         if(viaNotif==1){
             int idCirc = Integer.parseInt(getIntent().getStringExtra("idCircularNotif"));
-            lblFecha.setText(getIntent().getStringExtra("fechaCircularNotif"));
+            //lblFecha.setText(getIntent().getStringExtra("fechaCircularNotif"));
             getCircularId(idCirc);
            }
 
@@ -345,7 +346,27 @@ public class CircularDetalleActivity extends AppCompatActivity {
 
         wvwDetalleCircular.getSettings().setJavaScriptEnabled(true);
         wvwDetalleCircular.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        wvwDetalleCircular.setWebViewClient(new WebViewClient());
+        wvwDetalleCircular.setWebViewClient(new WebViewClient() {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.endsWith(".pdf")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(url), "application/pdf");
+                    try {
+                        view.getContext().startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        //user does not have a pdf viewer installed
+                    }
+
+
+
+                } else {
+                    wvwDetalleCircular.loadUrl(url);
+                }
+
+                return true;
+            }
+            });
+
         wvwDetalleCircular.getSettings().setSupportZoom(true);
         wvwDetalleCircular.getSettings().setBuiltInZoomControls(true);
         wvwDetalleCircular.getSettings().setDisplayZoomControls(true);
@@ -459,7 +480,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     String nivel = circulares.get(pos).getNivel();
                     new RegistrarLecturaAsyncTask(idCircular,idUsuario).execute();
                     wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
-                    lblNivel.setText(nivel);
+                    //lblNivel.setText(nivel);
 
 
                     String tituloCompleto = circulares.get(pos).getNombre();
@@ -526,7 +547,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                         btnCalendario.setVisibility(View.GONE);
                     new RegistrarLecturaAsyncTask(idCircular,idUsuario).execute();
                     wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
-                    lblNivel.setText(nivel);
+                   // lblNivel.setText(nivel);
 
                     String tituloCompleto = circulares.get(pos).getNombre();
                     String[] titulo = tituloCompleto.split(" ");
@@ -1074,16 +1095,16 @@ public void getCircularId(final int id){
                             String adjunto = jsonObject.getString("adjunto");
                             String nivel = "";
 
-                            if(!jsonObject.getString("nivel").equalsIgnoreCase("null"))
+                          /*  if(!jsonObject.getString("nivel").equalsIgnoreCase("null"))
                                 lblNivel.setText(getIntent().getStringExtra("nivel"));
                             else
-                                lblNivel.setText("");
+                                lblNivel.setText("");*/
 
 
 
                                 circularesId.add(new Circular(idCircular,
                                         "Circular No. "+idCircular,
-                                        nombre.toUpperCase(),"",
+                                        nombre,"",
                                         strFecha1,
                                         strFecha2,
                                         estado,

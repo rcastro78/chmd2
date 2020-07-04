@@ -150,7 +150,7 @@ public class PrincipalActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
 */
-                if(m.getIdMenu()==4){
+                if(m.getIdMenu()==5){
                     //Cerrar Sesión
                     try{
                         mGoogleSignInClient.signOut();

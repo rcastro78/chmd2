@@ -68,7 +68,7 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         });
 
         TextView lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
-        lblEncabezado.setText("Credencial de padre");
+        lblEncabezado.setText("Credencial");
         Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedMedium_21022.ttf");
         Typeface tf1 = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedBold_21016.ttf");
         lblEncabezado.setTypeface(tf1);

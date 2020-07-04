@@ -128,7 +128,7 @@ public class CircularesAdapter extends BaseAdapter {
             holder.llContainer.setBackgroundColor(Color.WHITE);
         }
 
-        holder.lblEncab.setText(c.getNombre().toUpperCase());
+        holder.lblEncab.setText(c.getNombre());
 
 
               //holder.lblFecha2.setText("");
