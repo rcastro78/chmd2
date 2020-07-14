@@ -77,7 +77,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     static String RUTA;
     private OnSwipeTouchListener onSwipeTouchListener;
     SharedPreferences sharedPreferences;
-    TextView lblTitulo,lblTitulo2,lblEncabezado;
+    TextView lblTitulo,lblTitulo2;
     WebView wvwDetalleCircular;
     String idCircular,contenidoCircular;
     String idUsuario,rsp;
@@ -117,9 +117,9 @@ public class CircularDetalleActivity extends AppCompatActivity {
             }
         });
         t = Typeface.createFromAsset(getAssets(),"fonts/GothamRoundedMedium_21022.ttf");
-        lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
-        lblEncabezado.setText("Circular");
-        lblEncabezado.setTypeface(t);
+       // lblEncabezado = toolbar.findViewById(R.id.lblTextoToolbar);
+       // lblEncabezado.setText("Circular");
+        //lblEncabezado.setTypeface(t);
 
         wvwDetalleCircular = findViewById(R.id.wvwDetalleCircular);
         BASE_URL = this.getString(R.string.BASE_URL);
@@ -178,7 +178,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
             ubicacionIcs = getIntent().getStringExtra("ubicaIcs");
             horaInicioIcs = getIntent().getStringExtra("horaInicioIcs");
             horaFinIcs = getIntent().getStringExtra("horaFinIcs");
-            if(!fechaIcs.equalsIgnoreCase("00:00:00"))
+            if(!horaInicioIcs.equalsIgnoreCase("00:00:00"))
                 btnCalendario.setVisibility(View.VISIBLE);
             else
                 btnCalendario.setVisibility(View.GONE);
@@ -541,7 +541,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                     horaInicioIcs = circulares.get(pos).getHoraInicialIcs();
                     horaFinIcs = circulares.get(pos).getHoraFinalIcs();
                     String nivel = circulares.get(pos).getNivel();
-                    if(!fechaIcs.equalsIgnoreCase("00:00:00"))
+                    if(!horaInicioIcs.equalsIgnoreCase("00:00:00"))
                         btnCalendario.setVisibility(View.VISIBLE);
                     else
                         btnCalendario.setVisibility(View.GONE);
@@ -600,7 +600,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                         new RegistrarLecturaAsyncTask(idCircular,idUsuario).execute();
                         wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
                         //lblTitulo.setText(circulares.get(pos).getNombre());
-                        if(!fechaIcs.equalsIgnoreCase("00:00:00"))
+                        if(!horaInicioIcs.equalsIgnoreCase("00:00:00"))
                             btnCalendario.setVisibility(View.VISIBLE);
                         else
                             btnCalendario.setVisibility(View.GONE);
