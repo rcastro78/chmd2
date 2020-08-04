@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,6 +67,7 @@ public class FavoritosFragment extends Fragment {
     static String METODO="getCircularesFavoritas.php";
     static String BASE_URL;
     static String RUTA;
+    static int FAVORITAS=1;
     SharedPreferences sharedPreferences;
     static String METODO_REG="leerCircular.php";
     static String METODO_DEL="eliminarCircular.php";
@@ -74,7 +76,7 @@ public class FavoritosFragment extends Fragment {
     String rsp="";
     String idUsuarioCredencial;
     ArrayList<String> seleccionados = new ArrayList<String>();
-
+    int idUsuario =0;
     public boolean hayConexion() {
         ConnectivityManager cm =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -93,8 +95,7 @@ public class FavoritosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
-        int idUsuario = Integer.parseInt(idUsuarioCredencial);
+
         if(hayConexion())
             getCirculares(idUsuario);
         else
@@ -107,13 +108,26 @@ public class FavoritosFragment extends Fragment {
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getActivity().getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-
+        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        idUsuario = Integer.parseInt(idUsuarioCredencial);
         View v = inflater.inflate(R.layout.fragment_circulares, container, false);
         lstCirculares = v.findViewById(R.id.lstCirculares);
 
         imgMoverFavSeleccionados = v.findViewById(R.id.imgMoverFavSeleccionados);
         imgMoverLeidos = v.findViewById(R.id.imgMoverComp);
         imgEliminarSeleccionados = v.findViewById(R.id.imgEliminarSeleccionados);
+
+
+        final SwipeRefreshLayout pullToRefresh = v.findViewById(R.id.swiperefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                circulares.clear();
+                getCirculares(idUsuario);// your code
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
 
         imgMoverFavSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +239,7 @@ public class FavoritosFragment extends Fragment {
                 String idCircular = circular.getIdCircular();
                 Intent intent = new Intent(getActivity(), CircularDetalleActivity.class);
                 intent.putExtra("idCircular",idCircular);
+                intent.putExtra("tipo",FAVORITAS);
                 intent.putExtra("tituloCircular",circular.getNombre());
                 intent.putExtra("fechaCircular",circular.getFecha2());
                 intent.putExtra("temaIcs",circular.getTemaIcs());
@@ -350,6 +365,7 @@ public class FavoritosFragment extends Fragment {
                                 }catch (Exception ex){
                                     nivel="";
                                 }
+                                if(Integer.parseInt(favorito)==1){
                                 circulares.add(new Circular(idCircular,
                                         "Circular No. "+idCircular,
                                         nombre,"",
@@ -370,7 +386,7 @@ public class FavoritosFragment extends Fragment {
                                 //                    String textoCircular, String fecha1, String fecha2, String estado
 
                             }
-
+                            }
 
 
 
@@ -428,7 +444,7 @@ public class FavoritosFragment extends Fragment {
         SearchView sv = new SearchView(((CircularActivity) getActivity()).getSupportActionBar().getThemedContext());
         MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
         MenuItemCompat.setActionView(item, sv);
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        /*sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 System.out.println("search query submit");
@@ -444,7 +460,7 @@ public class FavoritosFragment extends Fragment {
                 }
                 return true;
             }
-        });
+        });*/
     }
 
     private class FavAsyncTask extends AsyncTask<Void, Long, Boolean> {

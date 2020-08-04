@@ -68,33 +68,11 @@ public class NotificacionesActivity extends AppCompatActivity {
         });
 
 
-        ShortcutBadger.applyCount(getApplicationContext(), 0);
-        try {
-            leeNotificaciones();
-        }catch(Exception ex){
-            Toast.makeText(getApplicationContext(),ex.getMessage(),Toast.LENGTH_LONG).show();
-        }
+        //ShortcutBadger.applyCount(getApplicationContext(), 0);
+
     }
 
-    public void leeNotificaciones() {
-        ArrayList<DBNotificacion> dbNotificaciones = new ArrayList<>();
-        List<DBNotificacion> list = new Select().from(DBNotificacion.class).where("estado=0").execute();
-        dbNotificaciones.addAll(list);
-        Toast.makeText(getApplicationContext(),list.size()+"",Toast.LENGTH_LONG).show();
-        //llenar el adapter
-        for (int i = 0; i < dbNotificaciones.size(); i++) {
-            String idCircular=dbNotificaciones.get(i).idCircular;
-            String titulo=dbNotificaciones.get(i).titulo;
-            String recibido = dbNotificaciones.get(i).recibido;
-            String tipo = dbNotificaciones.get(i).tipo;
-            int estado = dbNotificaciones.get(i).estado;
 
-            items.add(new Notificacion(idCircular,titulo,"",tipo,recibido,estado));
-        }
-
-        adapter = new NotificacionAdapter(NotificacionesActivity.this,items);
-        lstNotificaciones.setAdapter(adapter);
-    }
     /*
     *  public void leeCirculares(int idUsuario){
 

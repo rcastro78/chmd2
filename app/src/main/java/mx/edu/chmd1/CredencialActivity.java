@@ -57,7 +57,7 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        toolbar.setNavigationIcon(R.drawable.icon_home);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,6 +98,8 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
             fotoUrl = "http://chmd.chmd.edu.mx:65083/CREDENCIALES/padres/sinfoto.png";
             Glide.with(this)
                     .load(fotoUrl)
+                    .placeholder(R.drawable.icon_non_profile)
+                    .error(R.drawable.icon_non_profile)
                     .into(imgFotoPadre);
 
             try{
@@ -114,6 +116,8 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
             if(response<400){
                 Glide.with(this)
                         .load(BASE_URL_FOTO+fotoUrl)
+                        .placeholder(R.drawable.icon_non_profile)
+                        .error(R.drawable.icon_non_profile)
                         .into(imgFotoPadre);
 
                 try{
@@ -126,6 +130,8 @@ private static String BASE_URL_FOTO="http://chmd.chmd.edu.mx:65083/CREDENCIALES/
                 fotoUrl = "http://chmd.chmd.edu.mx:65083/CREDENCIALES/padres/sinfoto.png";
                 Glide.with(this)
                         .load(fotoUrl)
+                        .placeholder(R.drawable.icon_non_profile)
+                        .error(R.drawable.icon_non_profile)
                         .into(imgFotoPadre);
 
                 try{

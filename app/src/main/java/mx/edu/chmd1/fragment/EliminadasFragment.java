@@ -24,6 +24,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
@@ -63,14 +64,14 @@ public class EliminadasFragment extends Fragment {
     ArrayList<Circular> circulares = new ArrayList<>();
     ArrayList<String> seleccionados = new ArrayList<String>();
     ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados;
-
+    int idUsuario = 0;
     public CircularesAdapter adapter = null;
-    static String METODO="getCircularesEliminadas.php";
+    static String METODO="getCircularesUsuarios.php";
     String rsp="";
     static String METODO_REG="leerCircular.php";
     static String METODO_DEL="eliminarCircular.php";
     static String METODO_FAV="favCircular.php";
-
+    static int ELIMINADAS=3;
     static String BASE_URL;
     static String RUTA;
     SharedPreferences sharedPreferences;
@@ -93,8 +94,6 @@ public class EliminadasFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
-        int idUsuario = Integer.parseInt(idUsuarioCredencial);
         if(hayConexion())
             getCirculares(idUsuario);
         else
@@ -106,12 +105,25 @@ public class EliminadasFragment extends Fragment {
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getActivity().getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
+        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        idUsuario = Integer.parseInt(idUsuarioCredencial);
 
         View v = inflater.inflate(R.layout.fragment_circulares, container, false);
         lstCirculares = v.findViewById(R.id.lstCirculares);
         imgMoverFavSeleccionados = v.findViewById(R.id.imgMoverFavSeleccionados);
         imgMoverLeidos = v.findViewById(R.id.imgMoverComp);
         imgEliminarSeleccionados = v.findViewById(R.id.imgEliminarSeleccionados);
+
+        final SwipeRefreshLayout pullToRefresh = v.findViewById(R.id.swiperefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                circulares.clear();
+                getCirculares(idUsuario);// your code
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
 
         imgMoverFavSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +234,7 @@ public class EliminadasFragment extends Fragment {
                 Circular circular = (Circular)lstCirculares.getItemAtPosition(position);
                 String idCircular = circular.getIdCircular();
                 Intent intent = new Intent(getActivity(), CircularDetalleActivity.class);
+                intent.putExtra("tipo",ELIMINADAS);
                 intent.putExtra("idCircular",idCircular);
                 intent.putExtra("tituloCircular",circular.getNombre());
                 intent.putExtra("fechaCircular",circular.getFecha2());
@@ -348,6 +361,7 @@ public class EliminadasFragment extends Fragment {
                                 }catch (Exception ex){
                                     nivel="";
                                 }
+                                if(Integer.parseInt(eliminado)==1)
                                 circulares.add(new Circular(idCircular,"Circular No. "+idCircular,nombre,
                                         "",
                                         strFecha1,
@@ -423,7 +437,7 @@ public class EliminadasFragment extends Fragment {
         SearchView sv = new SearchView(((CircularActivity) getActivity()).getSupportActionBar().getThemedContext());
         MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
         MenuItemCompat.setActionView(item, sv);
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        /*sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 System.out.println("search query submit");
@@ -439,7 +453,7 @@ public class EliminadasFragment extends Fragment {
                 }
                 return true;
             }
-        });
+        });*/
     }
 
     private class FavAsyncTask extends AsyncTask<Void, Long, Boolean> {

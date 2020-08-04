@@ -116,6 +116,20 @@
                     android:layout_height="match_parent"
                     android:layout_weight="20">
 
+                    <ImageView
+                        android:id="@+id/btnCompartir"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:src="@drawable/share"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="24dp"
+                        android:tint="#fff" />
+
+
+
                 </RelativeLayout>
 
 
@@ -170,49 +184,6 @@
                 android:layout_weight="10"
                 android:orientation="vertical"
                 android:weightSum="100">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="6dp"
-                    android:layout_weight="85"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:id="@+id/lblTitulo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="50"
-                        android:background="#91CAEE"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:padding="4dp"
-                        android:text="Titulo"
-                        android:textColor="@color/textoHeaderCircular"
-                        android:textSize="14dp" />
-
-
-                    <TextView
-                        android:id="@+id/lblTitulo2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/lblTitulo"
-                        android:layout_centerInParent="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center_horizontal|center_vertical"
-                        android:layout_weight="50"
-                        android:background="#098FCF"
-                        android:gravity="center_horizontal"
-                        android:padding="4dp"
-                        android:text="Titulo"
-                        android:textColor="@color/textoHeaderCircular"
-                        android:textSize="14dp"
-                        android:visibility="invisible" />
-
-                </LinearLayout>
 
                 <WebView
                     android:id="@+id/wvwDetalleCircular"

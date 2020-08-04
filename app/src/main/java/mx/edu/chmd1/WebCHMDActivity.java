@@ -44,6 +44,7 @@ WebView webView;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_chmd);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.icon_home);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         lblTextToolbar = toolbar.findViewById(R.id.lblTextoToolbar);
         lblTextToolbar.setText("CHMD - Web");

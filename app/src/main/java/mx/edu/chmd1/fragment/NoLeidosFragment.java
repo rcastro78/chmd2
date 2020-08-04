@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -61,29 +63,26 @@ import mx.edu.chmd1.modelosDB.DBCircular;
 
 public class NoLeidosFragment extends Fragment {
     public ListView lstCirculares;
-    ArrayList<Circular> circulares = new ArrayList<>();
+    public ArrayList<Circular> circulares = new ArrayList<>();
+    public ArrayList<Circular> circulares2 = new ArrayList<>();
     public CircularesAdapter adapter = null;
+    ArrayList<String> seleccionados = new ArrayList<String>();
+    ArrayList<String> idsSeleccionados = new ArrayList<String>();
+    static int NOLEIDAS=2;
+    private SearchView.OnQueryTextListener queryTextListener;
     static String METODO="getCircularesUsuarios.php";
-    static String BASE_URL;
-    static String RUTA;
     static String METODO_REG="leerCircular.php";
     static String METODO_DEL="eliminarCircular.php";
     static String METODO_FAV="favCircular.php";
     ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados;
-    String rsp="";
-    ArrayList<String> seleccionados = new ArrayList<String>();
-    SharedPreferences sharedPreferences;
+    static String BASE_URL;
+    static String RUTA;
+    String rsp;
     String idUsuarioCredencial;
-
-    public boolean hayConexion() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-
-    }
-
+    SharedPreferences sharedPreferences;
+    int totalCirculares=0;
+    boolean todos=false;
+    int idUsuario=0;
     @Override
     public void onPause() {
         super.onPause();
@@ -93,16 +92,13 @@ public class NoLeidosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         if(hayConexion()){
-            idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
-            int idUsuario = Integer.parseInt(idUsuarioCredencial);
             getCirculares(idUsuario);
         }
         else{
-            Toast.makeText(getActivity().getApplicationContext(),"No hay conexión a Internet",Toast.LENGTH_LONG).show();
-            String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
-            int idUsuario = Integer.parseInt(idUsuarioCredencial);
             leeCirculares(idUsuario);
+            Toast.makeText(getActivity().getApplicationContext(),"No hay conexión a Internet",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -111,42 +107,61 @@ public class NoLeidosFragment extends Fragment {
         BASE_URL = this.getString(R.string.BASE_URL);
         RUTA = this.getString(R.string.PATH);
         sharedPreferences = getActivity().getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
-        final String idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
-        final int idUsuario = Integer.parseInt(idUsuarioCredencial);
-        View v = inflater.inflate(R.layout.fragment_circulares, container, false);
+        idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
+        idUsuario = Integer.parseInt(idUsuarioCredencial);
+        //Toast.makeText(getActivity().getApplicationContext(),idUsuarioCredencial,Toast.LENGTH_LONG).show();
+
+        View v = inflater.inflate(R.layout.fragment_circulares_no_leidas, container, false);
         lstCirculares = v.findViewById(R.id.lstCirculares);
         imgMoverFavSeleccionados = v.findViewById(R.id.imgMoverFavSeleccionados);
         imgMoverLeidos = v.findViewById(R.id.imgMoverComp);
         imgEliminarSeleccionados = v.findViewById(R.id.imgEliminarSeleccionados);
 
+        final SwipeRefreshLayout pullToRefresh = v.findViewById(R.id.swiperefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                circulares.clear();
+                getCirculares(idUsuario);// your code
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
+
+
         imgMoverFavSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hayConexion()){
-                seleccionados = adapter.getSeleccionados();
-                if(seleccionados.size()>0){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("¡Advertencia!");
-                    builder.setMessage("¿Estás seguro que quieres marcar estas las circulares como favoritas?");
-                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                if (hayConexion()) {
+                    seleccionados = adapter.getSeleccionados();
+                    if (seleccionados.size() > 0) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("¡Advertencia!");
+                        builder.setMessage("¿Estás seguro que quieres mover estas circulares a favoritas?");
+                        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (int i = 0; i < seleccionados.size(); i++) {
+                                    Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
+                                    idsSeleccionados.add(c.getIdCircular());
+                                }
 
-                            for (int i = 0; i < seleccionados.size(); i++) {
-                                Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new FavAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
+                                new FavAsyncTask(idsSeleccionados, idUsuarioCredencial).execute();
+
+
 
                             }
+                        });
+                        builder.setNegativeButton("Cancelar", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        Toast.makeText(getActivity(), "Debes seleccionar al menos una circular para utilizar esta opción", Toast.LENGTH_LONG).show();
+                    }
 
-                        }
-                    });
-                    builder.setNegativeButton("Cancelar", null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
                 }else{
-                    Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity().getApplicationContext(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
                 }
-            }
             }
         });
 
@@ -156,68 +171,74 @@ public class NoLeidosFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(hayConexion()){
-                seleccionados = adapter.getSeleccionados();
-                if(seleccionados.size()>0){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("¡Advertencia!");
-                    builder.setMessage("¿Estás seguro que quieres marcar estas las circulares como leídas?");
-                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    seleccionados = adapter.getSeleccionados();
+                    if(seleccionados.size()>0){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("¡Advertencia!");
+                        builder.setMessage("¿Estás seguro que quieres mover estas circulares a leídas?");
+                        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (int i = 0; i < seleccionados.size(); i++) {
+                                    Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
+                                    idsSeleccionados.add(c.getIdCircular());
+                                }
 
-                            for (int i = 0; i < seleccionados.size(); i++) {
-                                Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new RegistrarLecturaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
+                                new RegistrarLecturaAsyncTask(idsSeleccionados,idUsuarioCredencial).execute();
+
+
 
                             }
-
-                        }
-                    });
-                    builder.setNegativeButton("Cancelar", null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                        });
+                        builder.setNegativeButton("Cancelar", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }else{
+                        Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
+                    }
                 }else{
-                    Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
-                }
-            }else{
                     Toast.makeText(getActivity().getApplicationContext(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
-            }
+
+                }
             }
         });
 
         imgEliminarSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hayConexion()){
-                seleccionados = adapter.getSeleccionados();
-                if(seleccionados.size()>0){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("¡Advertencia!");
-                    builder.setMessage("¿Estás seguro que quieres eliminar estas circulares?");
-                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                if(hayConexion()) {
+                    seleccionados = adapter.getSeleccionados();
+                    if (seleccionados.size() > 0) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("¡Advertencia!");
+                        builder.setMessage("¿Estás seguro que quieres eliminar estas circulares?");
+                        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (int i = 0; i < seleccionados.size(); i++) {
+                                    Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
+                                    idsSeleccionados.add(c.getIdCircular());
+                                }
 
-                            for (int i = 0; i < seleccionados.size(); i++) {
-                                Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new EliminaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
+                                new EliminaAsyncTask(idsSeleccionados, idUsuarioCredencial).execute();
+
+
 
                             }
+                        });
+                        builder.setNegativeButton("Cancelar", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        Toast.makeText(getActivity(), "Debes seleccionar al menos una circular para utilizar esta opción", Toast.LENGTH_LONG).show();
+                    }
 
-                        }
-                    });
-                    builder.setNegativeButton("Cancelar", null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
                 }else{
-                    Toast.makeText(getActivity(),"Debes seleccionar al menos una circular para utilizar esta opción",Toast.LENGTH_LONG).show();
-                }
-            }else{
                     Toast.makeText(getActivity().getApplicationContext(),"Esta función sólo está disponible con una conexión a Internet",Toast.LENGTH_LONG).show();
                 }
+
             }
         });
-
 
 
         lstCirculares.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -225,11 +246,14 @@ public class NoLeidosFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Se desplegará la circular
+
                 Circular circular = (Circular)lstCirculares.getItemAtPosition(position);
                 String idCircular = circular.getIdCircular();
                 Intent intent = new Intent(getActivity(), CircularDetalleActivity.class);
                 intent.putExtra("idCircular",idCircular);
+                intent.putExtra("tipo",NOLEIDAS);
                 intent.putExtra("tituloCircular",circular.getNombre());
+                intent.putExtra("contenidoCircular",circular.getContenido());
                 intent.putExtra("fechaCircular",circular.getFecha2());
                 intent.putExtra("viaNotif",0);
                 intent.putExtra("temaIcs",circular.getTemaIcs());
@@ -237,16 +261,19 @@ public class NoLeidosFragment extends Fragment {
                 intent.putExtra("ubicaIcs",circular.getUbicacionIcs());
                 intent.putExtra("horaInicioIcs",circular.getHoraInicialIcs());
                 intent.putExtra("horaFinIcs",circular.getHoraFinalIcs());
+                intent.putExtra("adjunto",circular.getAdjunto());
                 if(!circular.getNivel().equalsIgnoreCase("null")){
                     intent.putExtra("nivel",circular.getNivel());
                 }else{
                     intent.putExtra("nivel","");
                 }
 
+
                 getActivity().startActivity(intent);
 
             }
         });
+
         return v;
     }
 
@@ -258,20 +285,11 @@ public class NoLeidosFragment extends Fragment {
 
 
 
-    //dummy
-    /*public void llenaCirculares(){
-        circulares.clear();
-        circulares.add(new Circular("1","Encabezado","Nueva Circular","Este es el texto de la circular","11/07/2019","11/07/2019",1));
-        circulares.add(new Circular("2","Encabezado B","Nueva Circular","Este es el texto de la circular","11/07/2019","11/07/2019",1));
-        circulares.add(new Circular("3","Encabezado C","Nueva Circular","Este es el texto de la circular","11/07/2019","11/07/2019",1));
-        adapter = new CircularesAdapter(getActivity(),circulares);
-        lstCirculares.setAdapter(adapter);
-    }*/
 
     public void leeCirculares(int idUsuario){
-
+        circulares.clear();
         ArrayList<DBCircular> dbCirculares = new ArrayList<>();
-        List<DBCircular> list = new Select().from(DBCircular.class).where("idUsuario=? AND leida=0",idUsuario).execute();
+        List<DBCircular> list = new Select().from(DBCircular.class).where("idUsuario=?",idUsuario).execute();
         dbCirculares.addAll(list);
         //llenar el adapter
         for(int i=0; i<dbCirculares.size(); i++){
@@ -311,17 +329,16 @@ public class NoLeidosFragment extends Fragment {
     public void getCirculares(int usuario_id){
 
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final SimpleDateFormat formatoDestino = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
         final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd/MM/yyyy");
+        circulares.clear();
         JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO+"?usuario_id="+usuario_id,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-
-
-
                         try {
                             for(int i=0; i<response.length(); i++){
+                                totalCirculares = response.length();
                                 JSONObject jsonObject = (JSONObject) response
                                         .get(i);
                                 String idCircular = jsonObject.getString("id");
@@ -341,6 +358,7 @@ public class NoLeidosFragment extends Fragment {
                                 String favorito = jsonObject.getString("favorito");
                                 String leido = jsonObject.getString("leido");
                                 String contenido = jsonObject.getString("contenido");
+                                String eliminada = jsonObject.getString("eliminado");
 
                                 String temaIcs = jsonObject.getString("tema_ics");
                                 String fechaIcs = jsonObject.getString("fecha_ics");
@@ -354,8 +372,17 @@ public class NoLeidosFragment extends Fragment {
                                 }catch (Exception ex){
                                     nivel="";
                                 }
-                                if(Integer.parseInt(leido)==0)
-                                    circulares.add(new Circular(idCircular,"Circular No. "+idCircular,nombre,"",strFecha1,strFecha2,estado,Integer.parseInt(leido),Integer.parseInt(favorito),contenido,
+                                //No mostrar las eliminadas ni favoritas
+                                if(Integer.parseInt(leido)==0 && Integer.parseInt(favorito)==0){
+                                    circulares.add(new Circular(idCircular,
+                                            "Circular No. "+idCircular,
+                                            nombre,"",
+                                            strFecha1,
+                                            strFecha2,
+                                            estado,
+                                            Integer.parseInt(leido),
+                                            Integer.parseInt(favorito),
+                                            contenido,
                                             temaIcs,
                                             fechaIcs,
                                             horaInicialIcs,
@@ -363,13 +390,24 @@ public class NoLeidosFragment extends Fragment {
                                             ubicacionIcs,
                                             Integer.parseInt(adjunto),
                                             nivel));
+                                }
+
+                                circulares2.add(new Circular(idCircular,
+                                        "Circular No. "+idCircular,
+                                        nombre,"",
+                                        strFecha1,
+                                        strFecha2,
+                                        estado,
+                                        Integer.parseInt(leido),
+                                        Integer.parseInt(favorito),
+                                        contenido,
+                                        Integer.parseInt(eliminada)));
+
+
                                 //String idCircular, String encabezado, String nombre,
                                 //                    String textoCircular, String fecha1, String fecha2, String estado
 
                             }
-
-
-
 
 
                         }catch (JSONException e)
@@ -385,19 +423,38 @@ public class NoLeidosFragment extends Fragment {
                         //llenado de datos
                         //eliminar circulares y guardar las primeras 10 del registro
                         //Borra toda la tabla
-                        /*new Delete().from(DBCircular.class).execute();
+                        new Delete().from(DBCircular.class).execute();
+                        int maxRecuento = totalCirculares;
 
-                        for(int i=0; i<10; i++){
+                        for(int i=0; i<maxRecuento; i++){
                             DBCircular dbCircular = new DBCircular();
-                            dbCircular.idCircular = circulares.get(i).getIdCircular();
-                            dbCircular.estado = circulares.get(i).getEstado();
-                            dbCircular.nombre = circulares.get(i).getNombre();
-                            dbCircular.textoCircular = circulares.get(i).getTextoCircular();
-                            dbCircular.save();
-                        }*/
+                            dbCircular.idCircular = circulares2.get(i).getIdCircular();
+                            dbCircular.leida = circulares2.get(i).getLeida();
+                            if (circulares2.get(i).getLeida()==1){
+                                dbCircular.no_leida = 0;
+                            }
+                            if (circulares2.get(i).getLeida()==0){
+                                dbCircular.no_leida = 1;
+                            }
+                            dbCircular.idUsuario = idUsuario;
+                            dbCircular.favorita = circulares2.get(i).getFavorita();
+                            //dbCircular.compartida = circulares.get(i).getCompartida();
+                            dbCircular.eliminada = circulares2.get(i).getEliminada();
+                            dbCircular.nombre = circulares2.get(i).getNombre();
+                            //dbCircular.textoCircular = circulares.get(i).getTextoCircular();
+                            dbCircular.contenido = circulares2.get(i).getContenido();
+                            dbCircular.created_at = circulares2.get(i).getFecha1();
+                            dbCircular.updated_at = circulares2.get(i).getFecha2();
+                            Log.w("GUARDANDO",""+dbCircular.save());
+                        }
+                        try{
+                            adapter = new CircularesAdapter(getActivity(),circulares);
+                            lstCirculares.setAdapter(adapter);
+                        }catch(Exception ex){
+                            Toast.makeText(getActivity().getApplicationContext(),ex.getMessage(),Toast.LENGTH_LONG).show();
+                        }
 
-                        adapter = new CircularesAdapter(getActivity(),circulares);
-                        lstCirculares.setAdapter(adapter);
+
 
                     }
                 }, new Response.ErrorListener()
@@ -417,38 +474,22 @@ public class NoLeidosFragment extends Fragment {
     }
 
 
-    @Override
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
-        inflater.inflate(R.menu.menu_circular, menu);
-        MenuItem item = menu.findItem(R.id.searchBar);
-        SearchView sv = new SearchView(((CircularActivity) getActivity()).getSupportActionBar().getThemedContext());
-        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-        MenuItemCompat.setActionView(item, sv);
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                System.out.println("search query submit");
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                try {
-                    adapter.getFilter().filter(newText);
-                }catch (Exception ex){
+    public boolean hayConexion() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
-                }
-                return true;
-            }
-        });
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
     }
 
 
     private class FavAsyncTask extends AsyncTask<Void, Long, Boolean> {
-        private String idCircular;
+        private ArrayList<String> idCircular;
         private String idUsuario;
 
-        public FavAsyncTask(String idCircular, String idUsuario) {
+        public FavAsyncTask(ArrayList<String> idCircular, String idUsuario) {
             this.idCircular = idCircular;
             this.idUsuario = idUsuario;
         }
@@ -459,7 +500,7 @@ public class NoLeidosFragment extends Fragment {
             Log.d("RESPONSE","ejecutando...");
         }
 
-        public void registraLectura(){
+        public void hacerFavorita(String idCircular){
             HttpClient httpClient;
             HttpPost httppost;
             httpClient = new DefaultHttpClient();
@@ -504,15 +545,19 @@ public class NoLeidosFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            registraLectura();
+            for (String c: idCircular){
+                hacerFavorita(c);
+            }
+
             return null;
         }
     }
+
     private class RegistrarLecturaAsyncTask extends AsyncTask<Void, Long, Boolean> {
-        private String idCircular;
+        private ArrayList<String> idCircular;
         private String idUsuario;
 
-        public RegistrarLecturaAsyncTask(String idCircular, String idUsuario) {
+        public RegistrarLecturaAsyncTask(ArrayList<String> idCircular, String idUsuario) {
             this.idCircular = idCircular;
             this.idUsuario = idUsuario;
         }
@@ -523,7 +568,7 @@ public class NoLeidosFragment extends Fragment {
             Log.d("RESPONSE","ejecutando...");
         }
 
-        public void registraLectura(){
+        public void registraLectura(String idCircular){
             HttpClient httpClient;
             HttpPost httppost;
             httpClient = new DefaultHttpClient();
@@ -566,15 +611,16 @@ public class NoLeidosFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            registraLectura();
+            for(String c:idCircular)
+                registraLectura(c);
             return null;
         }
     }
     private class EliminaAsyncTask extends AsyncTask<Void, Long, Boolean> {
-        private String idCircular;
+        private ArrayList<String> idCircular;
         private String idUsuario;
 
-        public EliminaAsyncTask(String idCircular, String idUsuario) {
+        public EliminaAsyncTask(ArrayList<String> idCircular, String idUsuario) {
             this.idCircular = idCircular;
             this.idUsuario = idUsuario;
         }
@@ -585,7 +631,7 @@ public class NoLeidosFragment extends Fragment {
             Log.d("RESPONSE","ejecutando...");
         }
 
-        public void registraLectura(){
+        public void registraLectura(String idCircular){
             HttpClient httpClient;
             HttpPost httppost;
             httpClient = new DefaultHttpClient();
@@ -630,9 +676,9 @@ public class NoLeidosFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            registraLectura();
+            for(String c:idCircular)
+                registraLectura(c);
             return null;
         }
     }
-
 }

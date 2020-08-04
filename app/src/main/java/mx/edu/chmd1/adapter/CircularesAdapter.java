@@ -69,7 +69,7 @@ public class CircularesAdapter extends BaseAdapter {
             holder.lblEncab = convertView.findViewById(R.id.lblEncab);
             holder.lblDia = convertView.findViewById(R.id.lblDia);
             holder.imgCircular = convertView.findViewById(R.id.imgCircular);
-            holder.imgAdjunto = convertView.findViewById(R.id.imgClip);
+            //holder.imgAdjunto = convertView.findViewById(R.id.imgClip);
             holder.llContainer = convertView.findViewById(R.id.llContainer);
             holder.chkSeleccion = convertView.findViewById(R.id.chkSeleccion);
 
@@ -100,12 +100,12 @@ public class CircularesAdapter extends BaseAdapter {
         holder.lblDia.setTypeface(tf);
 
 
-        if(c.getAdjunto()==1){
+       /* if(c.getAdjunto()==1){
             holder.imgAdjunto.setVisibility(View.VISIBLE);
         }
         if(c.getAdjunto()==0){
             holder.imgAdjunto.setVisibility(View.GONE);
-        }
+        }*/
         if(c.getLeida()==1){
             holder.imgCircular.setImageResource(R.drawable.circle_white);
             holder.llContainer.setBackgroundColor(Color.WHITE);

@@ -11,8 +11,14 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.util.Log;
 import android.view.LayoutInflater;
+
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -61,15 +67,18 @@ public ArrayList<Circular> circulares = new ArrayList<>();
 public ArrayList<Circular> circulares2 = new ArrayList<>();
 public CircularesAdapter adapter = null;
  ArrayList<String> seleccionados = new ArrayList<String>();
+    ArrayList<String> idsSeleccionados = new ArrayList<String>();
       private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
-    static String METODO="getCircularesUsuarios.php";
+    static String METODO="getCirculares_iOS.php";
     static String METODO_REG="leerCircular.php";
+    static String METODO_NOLEER="noleerCircular.php";
     static String METODO_DEL="eliminarCircular.php";
     static String METODO_FAV="favCircular.php";
-    ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados;
+    ImageView imgMoverFavSeleccionados,imgMoverLeidos,imgEliminarSeleccionados,imgMoverNoLeidas;
     static String BASE_URL;
     static String RUTA;
+    static int TODAS=0;
     String rsp;
     String idUsuarioCredencial;
     SharedPreferences sharedPreferences;
@@ -85,7 +94,7 @@ public CircularesAdapter adapter = null;
     @Override
     public void onResume() {
         super.onResume();
-        circulares.clear();
+
         if(hayConexion()){
          getCirculares(idUsuario);
         }
@@ -102,15 +111,45 @@ public CircularesAdapter adapter = null;
         sharedPreferences = getActivity().getSharedPreferences(this.getString(R.string.SHARED_PREF), 0);
         idUsuarioCredencial = sharedPreferences.getString("idUsuarioCredencial","0");
         idUsuario = Integer.parseInt(idUsuarioCredencial);
-        //Toast.makeText(getActivity().getApplicationContext(),idUsuarioCredencial,Toast.LENGTH_LONG).show();
+
 
         View v = inflater.inflate(R.layout.fragment_circulares, container, false);
         lstCirculares = v.findViewById(R.id.lstCirculares);
         imgMoverFavSeleccionados = v.findViewById(R.id.imgMoverFavSeleccionados);
         imgMoverLeidos = v.findViewById(R.id.imgMoverComp);
         imgEliminarSeleccionados = v.findViewById(R.id.imgEliminarSeleccionados);
+        imgMoverNoLeidas = v.findViewById(R.id.imgMoverNoLeidas);
+        final SwipeRefreshLayout pullToRefresh = v.findViewById(R.id.swiperefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                circulares.clear();
+                getCirculares(idUsuario);// your code
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
+        imgMoverNoLeidas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (hayConexion()) {
+                    seleccionados = adapter.getSeleccionados();
+
+                    if (seleccionados.size() > 0) {
+
+                        //idsSeleccionados
+                        for (int i = 0; i < seleccionados.size(); i++) {
+                            Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
+                            idsSeleccionados.add(c.getIdCircular());
+                        }
+                        new NoLeerAsyncTask(idsSeleccionados, idUsuarioCredencial).execute();
 
 
+
+                    }
+                }
+            }
+        });
 
         imgMoverFavSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,16 +159,18 @@ public CircularesAdapter adapter = null;
                     if (seleccionados.size() > 0) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setTitle("¡Advertencia!");
-                        builder.setMessage("¿Estás seguro que quieres marcar estas las circulares como favoritas?");
+                        builder.setMessage("¿Estás seguro que quieres mover estas circulares a favoritas?");
                         builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 for (int i = 0; i < seleccionados.size(); i++) {
                                     Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                    new FavAsyncTask(c.getIdCircular(), idUsuarioCredencial).execute();
-
+                                    idsSeleccionados.add(c.getIdCircular());
                                 }
+
+                                new FavAsyncTask(idsSeleccionados, idUsuarioCredencial).execute();
+
+
 
                             }
                         });
@@ -156,16 +197,18 @@ public CircularesAdapter adapter = null;
                 if(seleccionados.size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("¡Advertencia!");
-                    builder.setMessage("¿Estás seguro que quieres marcar estas las circulares como leídas?");
+                    builder.setMessage("¿Estás seguro que quieres mover estas circulares a leídas?");
                     builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                             for (int i = 0; i < seleccionados.size(); i++) {
                                 Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                new RegistrarLecturaAsyncTask(c.getIdCircular(),idUsuarioCredencial).execute();
-
+                                idsSeleccionados.add(c.getIdCircular());
                             }
+
+                            new RegistrarLecturaAsyncTask(idsSeleccionados,idUsuarioCredencial).execute();
+
+
 
                         }
                     });
@@ -194,12 +237,14 @@ public CircularesAdapter adapter = null;
                         builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 for (int i = 0; i < seleccionados.size(); i++) {
                                     Circular c = (Circular) adapter.getItem(Integer.parseInt(seleccionados.get(i)));
-                                    new EliminaAsyncTask(c.getIdCircular(), idUsuarioCredencial).execute();
-
+                                    idsSeleccionados.add(c.getIdCircular());
                                 }
+
+                                new EliminaAsyncTask(idsSeleccionados, idUsuarioCredencial).execute();
+
+
 
                             }
                         });
@@ -228,6 +273,7 @@ public CircularesAdapter adapter = null;
                 String idCircular = circular.getIdCircular();
                 Intent intent = new Intent(getActivity(), CircularDetalleActivity.class);
                 intent.putExtra("idCircular",idCircular);
+                intent.putExtra("tipo",TODAS);
                 intent.putExtra("tituloCircular",circular.getNombre());
                 intent.putExtra("contenidoCircular",circular.getContenido());
                 intent.putExtra("fechaCircular",circular.getFecha2());
@@ -263,7 +309,7 @@ public CircularesAdapter adapter = null;
 
 
     public void leeCirculares(int idUsuario){
-
+        circulares.clear();
         ArrayList<DBCircular> dbCirculares = new ArrayList<>();
         List<DBCircular> list = new Select().from(DBCircular.class).where("idUsuario=?",idUsuario).execute();
         dbCirculares.addAll(list);
@@ -307,7 +353,7 @@ public CircularesAdapter adapter = null;
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
         final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd/MM/yyyy");
-
+        circulares.clear();
         JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO+"?usuario_id="+usuario_id,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -349,7 +395,7 @@ public CircularesAdapter adapter = null;
                                     nivel="";
                                 }
                                 //No mostrar las eliminadas
-                                if(eliminada!="1"){
+                                if(Integer.parseInt(eliminada)==0){
                                     circulares.add(new Circular(idCircular,
                                             "Circular No. "+idCircular,
                                             nombre,"",
@@ -461,15 +507,11 @@ public CircularesAdapter adapter = null;
     }
 
 
-
-
-
-
     private class FavAsyncTask extends AsyncTask<Void, Long, Boolean> {
-        private String idCircular;
+        private ArrayList<String> idCircular;
         private String idUsuario;
 
-        public FavAsyncTask(String idCircular, String idUsuario) {
+        public FavAsyncTask(ArrayList<String> idCircular, String idUsuario) {
             this.idCircular = idCircular;
             this.idUsuario = idUsuario;
         }
@@ -480,7 +522,7 @@ public CircularesAdapter adapter = null;
             Log.d("RESPONSE","ejecutando...");
         }
 
-        public void registraLectura(){
+        public void hacerFavorita(String idCircular){
             HttpClient httpClient;
             HttpPost httppost;
             httpClient = new DefaultHttpClient();
@@ -525,15 +567,18 @@ public CircularesAdapter adapter = null;
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            registraLectura();
+            for (String c: idCircular){
+                hacerFavorita(c);
+            }
+
             return null;
         }
     }
-    private class RegistrarLecturaAsyncTask extends AsyncTask<Void, Long, Boolean> {
-        private String idCircular;
+    private class NoLeerAsyncTask extends AsyncTask<Void, Long, Boolean> {
+        private ArrayList<String> idCircular;
         private String idUsuario;
 
-        public RegistrarLecturaAsyncTask(String idCircular, String idUsuario) {
+        public NoLeerAsyncTask(ArrayList<String> idCircular, String idUsuario) {
             this.idCircular = idCircular;
             this.idUsuario = idUsuario;
         }
@@ -544,7 +589,75 @@ public CircularesAdapter adapter = null;
             Log.d("RESPONSE","ejecutando...");
         }
 
-        public void registraLectura(){
+        public void noLeer(String id){
+            HttpClient httpClient;
+            HttpPost httppost;
+            httpClient = new DefaultHttpClient();
+            httppost = new HttpPost(BASE_URL+RUTA+METODO_NOLEER);
+            try {
+                List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+                nameValuePairs.add(new BasicNameValuePair("circular_id",id));
+                nameValuePairs.add(new BasicNameValuePair("usuario_id",idUsuario));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                HttpResponse response = httpClient.execute(httppost);
+                int responseCode = response.getStatusLine().getStatusCode();
+                Log.d("RESPONSE", ""+responseCode);
+                switch(responseCode) {
+                    case 200:
+                        HttpEntity entity = response.getEntity();
+                        if(entity != null) {
+                            String responseBody = EntityUtils.toString(entity);
+                            rsp=responseBody;
+                        }
+                        break;
+                }
+                Log.d("RESPONSE", rsp);
+
+
+
+
+            }catch (Exception e){
+                Log.d("RESPONSE",e.getMessage());
+            }
+
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            Log.d("RESPONSE","ejecutado.-");
+            Intent intent = new Intent(getActivity(),CircularActivity.class);
+            startActivity(intent);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            for (String c: idCircular
+                 ) {
+                noLeer(c);
+            }
+
+            return null;
+        }
+    }
+    private class RegistrarLecturaAsyncTask extends AsyncTask<Void, Long, Boolean> {
+        private ArrayList<String> idCircular;
+        private String idUsuario;
+
+        public RegistrarLecturaAsyncTask(ArrayList<String> idCircular, String idUsuario) {
+            this.idCircular = idCircular;
+            this.idUsuario = idUsuario;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("RESPONSE","ejecutando...");
+        }
+
+        public void registraLectura(String idCircular){
             HttpClient httpClient;
             HttpPost httppost;
             httpClient = new DefaultHttpClient();
@@ -587,15 +700,16 @@ public CircularesAdapter adapter = null;
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            registraLectura();
+            for(String c:idCircular)
+                registraLectura(c);
             return null;
         }
     }
     private class EliminaAsyncTask extends AsyncTask<Void, Long, Boolean> {
-        private String idCircular;
+        private ArrayList<String> idCircular;
         private String idUsuario;
 
-        public EliminaAsyncTask(String idCircular, String idUsuario) {
+        public EliminaAsyncTask(ArrayList<String> idCircular, String idUsuario) {
             this.idCircular = idCircular;
             this.idUsuario = idUsuario;
         }
@@ -606,7 +720,7 @@ public CircularesAdapter adapter = null;
             Log.d("RESPONSE","ejecutando...");
         }
 
-        public void registraLectura(){
+        public void registraLectura(String idCircular){
             HttpClient httpClient;
             HttpPost httppost;
             httpClient = new DefaultHttpClient();
@@ -651,8 +765,15 @@ public CircularesAdapter adapter = null;
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            registraLectura();
+            for(String c:idCircular)
+                registraLectura(c);
             return null;
         }
     }
+
+
+
+
+
+
 }

@@ -42,6 +42,7 @@
                     android:orientation="vertical"
                     android:paddingLeft="6dip"
                     android:paddingTop="6dip"
+                    android:visibility="visible"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <ImageView

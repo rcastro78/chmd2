@@ -147,7 +147,7 @@ public class CHMDMessagingService extends FirebaseMessagingService {
                 //Con esto colocamos el badge
                 ShortcutBadger.applyCount(getApplicationContext(), 1);
 
-                Calendar c = Calendar.getInstance();
+                /*Calendar c = Calendar.getInstance();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                 String hoy=sdf.format(c.getTime());
                 DBNotificacion notificacion = new DBNotificacion();
@@ -156,7 +156,7 @@ public class CHMDMessagingService extends FirebaseMessagingService {
                 notificacion.titulo = title;
                 notificacion.descripcion="";
                 notificacion.recibido=hoy;
-                notificacion.save();
+                notificacion.save();*/
                 //Toast.makeText(getApplicationContext(),guardado+"",Toast.LENGTH_LONG).show();
             }else{
                 //Aquí se recibió por fcm
@@ -173,13 +173,13 @@ public class CHMDMessagingService extends FirebaseMessagingService {
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                 String hoy=sdf.format(c.getTime());
-                DBNotificacion notificacion = new DBNotificacion();
+                /*DBNotificacion notificacion = new DBNotificacion();
                 notificacion.estado=0;
                 notificacion.idCircular=idCircular;
                 notificacion.titulo = title;
                 notificacion.descripcion="";
                 notificacion.recibido=hoy;
-                notificacion.save();
+                notificacion.save();*/
                 //Toast.makeText(getApplicationContext(),guardado+"",Toast.LENGTH_LONG).show();
             }
 

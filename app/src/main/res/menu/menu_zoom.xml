@@ -3,16 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <item
-        android:id="@+id/zoomIn"
-        android:icon="@drawable/ic_zoom_in_white_24dp"
+        android:id="@+id/editar"
+        android:icon="@android:drawable/ic_menu_edit"
         android:orderInCategory="100"
-        android:title="ampliar"
+        android:title="editar"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/zoomOut"
-        android:icon="@drawable/ic_zoom_out_white_24dp"
-        android:orderInCategory="200"
-        android:title="disminuir"
-        app:showAsAction="always" />
+
 </menu>

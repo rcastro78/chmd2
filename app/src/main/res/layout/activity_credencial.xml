@@ -23,7 +23,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="40">
+            android:layout_weight="35">
 
             <RelativeLayout
                 android:id="@+id/layoutTop"
@@ -108,11 +108,11 @@
 
             <ImageView
                 android:id="@+id/imgFotoPadre"
-                android:layout_width="90dp"
-                android:layout_height="135dp"
+                android:layout_width="120dp"
+                android:layout_height="180dp"
                 android:layout_above="@id/layoutBottom"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="-36dp"
+                android:layout_marginBottom="-84dp"
                 android:adjustViewBounds="true"
                 android:src="@drawable/icon_non_profile" />
 
@@ -122,7 +122,7 @@
             android:id="@+id/llQR"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="60"
+            android:layout_weight="65"
             android:orientation="vertical"
             android:weightSum="100">
 
