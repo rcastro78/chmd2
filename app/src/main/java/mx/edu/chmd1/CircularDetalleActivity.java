@@ -65,6 +65,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import mx.edu.chmd1.modelos.Circular;
 import mx.edu.chmd1.modelosDB.DBCircular;
+import mx.edu.chmd1.modelosDB.DBNotificacion;
 import mx.edu.chmd1.utilerias.OnSwipeTouchListener;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -87,6 +88,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     static int FAVORITAS=1;
     static int NOLEIDAS=2;
     static int ELIMINADAS=3;
+    static int NOTIFICACIONES=5;
     private OnSwipeTouchListener onSwipeTouchListener;
     SharedPreferences sharedPreferences;
     //TextView lblTitulo,lblTitulo2;
@@ -212,7 +214,8 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 getCircularesNoLeidas(idUsuarioCredencial);
             if (tipo == ELIMINADAS)
                 getCircularesEliminadas(idUsuarioCredencial);
-
+            if (tipo == NOTIFICACIONES)
+                getNotificaciones(idUsuarioCredencial);
         }else {
 
 
@@ -224,7 +227,8 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 leeCircularesNoLeidas(Integer.parseInt(idUsuarioCredencial));
             if(tipo==ELIMINADAS)
                 leeCircularesEliminadas(Integer.parseInt(idUsuarioCredencial));
-
+            if(tipo==NOTIFICACIONES)
+                leeNotificaciones(Integer.parseInt(idUsuarioCredencial));
 
 
         }
@@ -262,18 +266,23 @@ public class CircularDetalleActivity extends AppCompatActivity {
         imgEliminarSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
-                builder.setTitle("Eliminar Circular");
-                builder.setMessage("¿Estás seguro que quieres eliminar esta circular?");
-                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new EliminaAsyncTask(idCircular,idUsuario).execute();
-                    }
-                });
-                builder.setNegativeButton("Cancelar", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                if(hayConexion()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
+                    builder.setTitle("Eliminar Circular");
+                    builder.setMessage("¿Estás seguro que quieres eliminar esta circular?");
+                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new EliminaAsyncTask(idCircular, idUsuario).execute();
+                        }
+                    });
+                    builder.setNegativeButton("Cancelar", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Esta opción solo puede utilizarse con una conexión activa a Internet",Toast.LENGTH_LONG).show();
+
+                }
             }
         });
 
@@ -281,18 +290,30 @@ public class CircularDetalleActivity extends AppCompatActivity {
         imgMoverFavSeleccionados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
-                builder.setTitle("Mover a favoritos");
-                builder.setMessage("¿Estás seguro que quieres mover esta circular a favoritas?");
-                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new FavAsyncTask(idCircular,idUsuario).execute();
+
+                if(hayConexion()) {
+                    if(tipo!=5){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
+                        builder.setTitle("Mover a favoritos");
+                        builder.setMessage("¿Estás seguro que quieres mover esta circular a favoritas?");
+                        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new FavAsyncTask(idCircular,idUsuario).execute();
+                            }
+                        });
+                        builder.setNegativeButton("Cancelar", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Esta opción no puede usarse con las notificaciones",Toast.LENGTH_LONG).show();
                     }
-                });
-                builder.setNegativeButton("Cancelar", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Esta opción solo puede utilizarse con una conexión activa a Internet",Toast.LENGTH_LONG).show();
+
+                }
+
+
             }
         });
 
@@ -358,7 +379,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         btnCalendario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(hayConexion()){
+
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(CircularDetalleActivity.this);
                     builder.setTitle("Calendario");
@@ -413,7 +434,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
 
 
                 }
-            }
+
         });
 
 
@@ -1370,6 +1391,107 @@ public void getCircularId(final int id){
         // Adding request to request queue
         AppCHMD.getInstance().addToRequestQueue(req);
     }
+    public void getNotificaciones(String usuario_id){
+
+        final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final SimpleDateFormat formatoDestino = new SimpleDateFormat("HH:mm:ss");
+        final SimpleDateFormat formatoDestino2 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+
+        JsonArrayRequest req = new JsonArrayRequest(BASE_URL+RUTA+METODO2N+"?usuario_id="+usuario_id,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for(int i=0; i<response.length(); i++){
+
+                                JSONObject jsonObject = (JSONObject) response
+                                        .get(i);
+                                String idCircular = jsonObject.getString("id");
+                                String nombre = jsonObject.getString("titulo");
+                                String fecha1 = jsonObject.getString("fecha");
+                                String fecha2 = jsonObject.getString("fecha");
+                                Date date1=new Date(),date2=new Date();
+                                try{
+                                    date1 = formatoInicio.parse(fecha1);
+                                    date2 = formatoInicio.parse(fecha2);
+                                }catch (ParseException ex){
+
+                                }
+                                String strFecha1 = formatoDestino.format(date1);
+                                String strFecha2 = formatoDestino2.format(date2);
+                                String estado = jsonObject.getString("estatus");
+                                String favorito = jsonObject.getString("favorito");
+                                String leido = jsonObject.getString("leido");
+                                String contenido = jsonObject.getString("contenido");
+                                String eliminada = jsonObject.getString("eliminado");
+
+                                String temaIcs = jsonObject.getString("tema_ics");
+                                String fechaIcs = jsonObject.getString("fecha_ics");
+                                String horaInicialIcs = jsonObject.getString("hora_inicial_ics");
+                                String horaFinalIcs = jsonObject.getString("hora_final_ics");
+                                String ubicacionIcs = jsonObject.getString("ubicacion_ics");
+                                String adjunto = jsonObject.getString("adjunto");
+                                String nivel = "";
+                                try{
+                                    nivel=jsonObject.getString("nivel");
+                                }catch (Exception ex){
+                                    nivel="";
+                                }
+                                if(eliminada!="1"){
+                                    circulares.add(new Circular(idCircular,
+                                            "Circular No. "+idCircular,
+                                            nombre,"",
+                                            strFecha1,
+                                            strFecha2,
+                                            estado,
+                                            Integer.parseInt(leido),
+                                            Integer.parseInt(favorito),
+                                            contenido,
+                                            temaIcs,
+                                            fechaIcs,
+                                            horaInicialIcs,
+                                            horaFinalIcs,
+                                            ubicacionIcs,
+                                            Integer.parseInt(adjunto),
+                                            nivel));
+                                }
+
+                                //String idCircular, String encabezado, String nombre,
+                                //                    String textoCircular, String fecha1, String fecha2, String estado
+
+                            }
+
+
+                        }catch (JSONException e)
+                        {
+                            e.printStackTrace();
+
+
+                        }
+                        //TODO: Cambiarlo cuando pase a prueba en MX
+                        // if (existe.equalsIgnoreCase("1")) {
+                        //llenado de datos
+                        //eliminar circulares y guardar las primeras 10 del registro
+                        //Borra toda la tabla
+
+
+
+
+                    }
+                }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                VolleyLog.d("ERROR", "Error: " + error.getMessage());
+
+
+            }
+        });
+
+        // Adding request to request queue
+        AppCHMD.getInstance().addToRequestQueue(req);
+    }
     public void getCircularesFavs(String usuario_id){
 
         final SimpleDateFormat formatoInicio = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1707,6 +1829,40 @@ public void getCircularId(final int id){
             }
 
         } //fin del for
+    public void leeNotificaciones(int idUsuario){
+
+        ArrayList<DBNotificacion> dbCirculares = new ArrayList<>();
+        List<DBNotificacion> list = new Select().from(DBNotificacion.class).where("idUsuario=?",idUsuario).execute();
+        dbCirculares.addAll(list);
+        //llenar el adapter
+        for(int i=0; i<dbCirculares.size(); i++){
+            String idCircular = dbCirculares.get(i).idCircular;
+            String nombre = dbCirculares.get(i).nombre;
+            String fecha1 =dbCirculares.get(i).created_at;
+            String fecha2 = dbCirculares.get(i).updated_at;
+
+
+            String estado = "0";
+            String favorito =  String.valueOf(dbCirculares.get(i).favorita);
+            String leido = String.valueOf(dbCirculares.get(i).leida);
+            String contenido = String.valueOf(dbCirculares.get(i).contenido);
+            String eliminada = String.valueOf(dbCirculares.get(i).eliminada);
+            //Toast.makeText(getActivity(),contenido,Toast.LENGTH_LONG).show();
+            if(Integer.parseInt(eliminada)==0)
+                circulares.add(new Circular(idCircular,
+                        "Circular No. "+idCircular,
+                        nombre,"",
+                        fecha1,
+                        fecha2,
+                        estado,
+                        Integer.parseInt(leido),
+                        Integer.parseInt(favorito),
+                        contenido,"","","","","",0,"")
+                );
+
+        }
+
+    }
     public void leeCircularesFavs(int idUsuario){
 
         ArrayList<DBCircular> dbCirculares = new ArrayList<>();
