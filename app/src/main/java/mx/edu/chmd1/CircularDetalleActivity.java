@@ -1,6 +1,7 @@
 package mx.edu.chmd1;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -70,6 +71,7 @@ import mx.edu.chmd1.utilerias.OnSwipeTouchListener;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
 
@@ -98,6 +100,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
     String temaIcs,fechaIcs,ubicacionIcs,horaInicioIcs,horaFinIcs;
     ImageView imgHome,imgEliminarSeleccionados,imgMoverFavSeleccionados;
     ImageView btnSiguiente,btnAnterior,btnCalendario,btnCompartir;
+    FloatingActionButton fabReload;
     Typeface t;
     String t2;
     int pos=0;
@@ -120,6 +123,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         idCircular = getIntent().getStringExtra("idCircular");
         tipo = getIntent().getIntExtra("tipo",0);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        fabReload = findViewById(R.id.fabReload);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
@@ -180,6 +184,16 @@ public class CircularDetalleActivity extends AppCompatActivity {
         btnAnterior = findViewById(R.id.btnAnterior);
         btnCompartir = findViewById(R.id.btnCompartir);
         String idUsuarioCredencial="";
+
+        fabReload.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onClick(View v) {
+                wvwDetalleCircular.loadUrl(BASE_URL+RUTA+METODO+"?id="+idCircular);
+                fabReload.setVisibility(View.GONE);
+            }
+        });
+
 
         final int viaNotif = getIntent().getIntExtra("viaNotif",0);
         if(viaNotif==1){
@@ -441,6 +455,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
         wvwDetalleCircular.getSettings().setJavaScriptEnabled(true);
         wvwDetalleCircular.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         wvwDetalleCircular.setWebViewClient(new WebViewClient() {
+            @SuppressLint("RestrictedApi")
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (url.endsWith(".pdf")) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -456,7 +471,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
                 } else {
                     wvwDetalleCircular.loadUrl(url);
                 }
-
+                fabReload.setVisibility(View.VISIBLE);
                 return true;
             }
             });
@@ -675,7 +690,7 @@ public class CircularDetalleActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //obtener la posición del id
-
+                //Toast.makeText(getApplicationContext(),""+circulares.size(),Toast.LENGTH_LONG).show();
                 try{
                     if(pos<circulares.size()){
                         for(int i=0; i<circulares.size(); i++){
@@ -1437,7 +1452,7 @@ public void getCircularId(final int id){
                                 }catch (Exception ex){
                                     nivel="";
                                 }
-                                if(eliminada!="1"){
+
                                     circulares.add(new Circular(idCircular,
                                             "Circular No. "+idCircular,
                                             nombre,"",
@@ -1454,7 +1469,7 @@ public void getCircularId(final int id){
                                             ubicacionIcs,
                                             Integer.parseInt(adjunto),
                                             nivel));
-                                }
+
 
                                 //String idCircular, String encabezado, String nombre,
                                 //                    String textoCircular, String fecha1, String fecha2, String estado

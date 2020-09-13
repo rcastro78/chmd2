@@ -194,7 +194,13 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="8dp"
-                    android:layout_weight="15"></WebView>
+                    android:layout_weight="15">
+
+
+                </WebView>
+
+
+
 
             </LinearLayout>
 
@@ -202,5 +208,18 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabReload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="24dp"
+        android:background="@color/colorPrimaryDark"
+        android:clickable="true"
+        android:visibility="gone"
+        app:elevation="6dp"
+        app:srcCompat="@drawable/back" />
 
 </RelativeLayout>
